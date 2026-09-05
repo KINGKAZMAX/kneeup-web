@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KneeUp Apps · 应用中心</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/apps.css">
+</head>
+<body>
+
+<header class="apps-topbar">
+  <div class="apps-topbar-inner">
+    <a class="apps-back" href="../index.html">← 官网 Back</a>
+    <span class="apps-brand">KneeUp <b>Apps</b></span>
+    <span class="ku-chip sim">SIMULATED DATA · 演示数据，非实测</span>
+  </div>
+  <nav class="apps-nav" id="apps-nav" aria-label="应用导航">
+    <a href="#/patient" data-route="patient" class="apps-chip">用户端</a>
+    <a href="#/coach"   data-route="coach"   class="apps-chip">教练端</a>
+    <a href="#/screen"  data-route="screen"  class="apps-chip">AI数据屏</a>
+    <a href="#/game"    data-route="game"    class="apps-chip">训练游戏</a>
+    <a href="#/body"    data-route="body"    class="apps-chip">身体记录</a>
+  </nav>
+</header>
+
+<main id="app" class="apps-main" aria-live="polite"></main>
+
+<footer class="apps-foot">
+  <div class="container">
+    <!-- disclaimer:start -->
+    <p class="foot-note"><strong>MENISCUS SHIELD is a sports support and training-feedback product. It is not a medical device and is not intended to diagnose, treat, rehabilitate, or prevent any injury or disease. If you experience pain or injury, consult a qualified medical professional.</strong></p>
+    <p class="foot-note"><strong>MENISCUS SHIELD为运动支撑与训练反馈产品，非医疗器械，不用于诊断、治疗、康复或预防任何损伤与疾病。如有疼痛或损伤，请咨询专业医疗机构。</strong></p>
+    <!-- disclaimer:end -->
+    <p class="foot-note">© Team Free Will · kneeup-web · 本页数据均为本地演示（SIMULATED），导出 JSON 逐条携带 source 标注</p>
+  </div>
+</footer>
+
+<script type="module" src="js/router.js"></script>
+</body>
+</html>
