@@ -1,0 +1,140 @@
+/* ===== KneeUp 3D 实验室（3d.html 专属，W4）——碳黑×钴蓝，依赖 tokens.css/base.css ===== */
+
+html, body { height: 100%; overflow: hidden; }
+
+#stage {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  max-width: none; display: block; touch-action: none;
+}
+
+/* ---- HUD 玻璃卡（预览页同款配方） ---- */
+.hud {
+  position: fixed; z-index: 10;
+  background: rgba(26, 27, 31, .88);
+  border: 1px solid var(--line); border-radius: 14px;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+
+/* 左上标题 */
+#title { top: max(14px, env(safe-area-inset-top)); left: 14px; padding: 10px 14px; }
+#title .back {
+  display: block; font-family: var(--font-mono); font-size: .68rem;
+  letter-spacing: .06em; color: var(--muted);
+}
+#title .back:hover { color: var(--accent); text-decoration: none; }
+#title b { display: block; font-size: .92rem; margin-top: 2px; letter-spacing: -.01em; }
+#title small { display: block; color: var(--muted); font-size: .66rem; margin-top: 2px; }
+
+/* 模式按钮组：底部居中胶囊 */
+#modes {
+  left: 50%; transform: translateX(-50%);
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex; gap: 6px; padding: 6px; border-radius: 999px;
+}
+.mode-btn {
+  appearance: none; border: 1px solid transparent; background: transparent;
+  color: var(--ink-dim); border-radius: 999px; padding: 7px 14px;
+  font-size: .78rem; min-height: 36px; cursor: pointer;
+  display: flex; align-items: baseline; gap: 6px; white-space: nowrap;
+}
+.mode-btn span { font-family: var(--font-mono); font-size: .56rem; letter-spacing: .1em; color: var(--muted); }
+.mode-btn:hover:not(:disabled):not(.is-on) { color: var(--ink); }
+.mode-btn.is-on { background: var(--primary); color: #fff; }
+.mode-btn.is-on span { color: rgba(255, 255, 255, .72); }
+.mode-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+/* 模式提示行（左下） */
+#hint {
+  left: 14px; bottom: max(16px, env(safe-area-inset-bottom));
+  padding: 8px 12px; border-radius: 10px;
+  color: var(--muted); font-size: .68rem; max-width: 32vw;
+}
+
+/* 右下角标 */
+#corner {
+  right: 14px; bottom: max(16px, env(safe-area-inset-bottom));
+  padding: 8px 12px; text-align: right;
+  display: flex; flex-direction: column; gap: 2px;
+}
+#corner .tag { color: var(--accent); font-family: var(--font-mono); font-size: .6rem; letter-spacing: .1em; }
+#corner .meta { color: var(--muted); font-size: .62rem; }
+
+/* ---- 锚点 DOM 图钉层（heat 模式） ---- */
+#pins { position: fixed; inset: 0; z-index: 6; pointer-events: none; opacity: 0; transition: opacity .3s; }
+#pins.is-on { opacity: 1; }
+.pin { position: absolute; left: 0; top: 0; appearance: none; background: none; border: 0; padding: 0; pointer-events: auto; cursor: pointer; }
+.pin .pp { position: relative; transform: translate(-50%, -50%); width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+.pin .dot {
+  width: 12px; height: 12px; border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(67, 118, 235, .22), 0 0 16px rgba(67, 118, 235, .7);
+  transition: transform .2s;
+}
+.pin .lbl {
+  position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap; font-size: .66rem; color: var(--ink-dim);
+  background: rgba(11, 12, 14, .74); border: 1px solid var(--line);
+  padding: 2px 9px; border-radius: 999px;
+}
+.pin:hover .dot, .pin.is-hot .dot { transform: scale(1.5); }
+
+/* ---- 锚点结构卡片 ---- */
+#zone-card { z-index: 12; width: 292px; padding: 14px 16px; }
+#zone-card header { display: flex; align-items: baseline; gap: 8px; padding-right: 20px; flex-wrap: wrap; }
+#zone-card b { font-size: .95rem; }
+#zone-card .en { color: var(--muted); font-family: var(--font-mono); font-size: .6rem; letter-spacing: .08em; }
+#zone-card p { font-size: .76rem; color: var(--ink-dim); margin-top: 8px; line-height: 1.7; }
+#zone-card .en-copy { color: var(--muted); font-size: .66rem; }
+#zone-card .ku-chip { margin-top: 10px; }
+#zc-close {
+  position: absolute; top: 4px; right: 8px; appearance: none; border: 0; background: none;
+  color: var(--muted); font-size: 1rem; width: 26px; height: 26px; cursor: pointer; border-radius: 50%;
+}
+#zc-close:hover { color: var(--ink); background: var(--panel-2); }
+
+/* ---- 载入遮罩 ---- */
+#loading {
+  position: fixed; inset: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-0); color: var(--muted);
+  font-family: var(--font-mono); font-size: .72rem; letter-spacing: .14em;
+  transition: opacity .4s;
+}
+#loading.off { opacity: 0; pointer-events: none; }
+#loading span::after { content: ""; animation: ku-dots 1.2s steps(4) infinite; }
+@keyframes ku-dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+
+/* ---- 兜底轮播（无 WebGL / 微信 / 模型失败） ---- */
+#fallback {
+  position: fixed; inset: 0; z-index: 30; background: var(--bg-0);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 18px; padding: 20px; overflow: auto;
+}
+#fallback[hidden] { display: none; }
+.fb-frame {
+  position: relative; width: min(560px, 88vw); aspect-ratio: 4 / 3;
+  border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line);
+}
+.fb-frame img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0; transition: opacity 4s ease;
+}
+.fb-frame img.is-on { opacity: 1; }
+.fb-card { position: relative; max-width: min(560px, 88vw); padding: 16px 18px; }
+.fb-card b { font-size: .95rem; }
+.fb-card p { color: var(--ink-dim); font-size: .78rem; margin: 6px 0 12px; }
+
+/* ---- 移动端 ---- */
+@media (max-width: 767px) {
+  #hint { display: none; }
+  #corner { top: max(14px, env(safe-area-inset-top)); right: 14px; bottom: auto; }
+  #modes {
+    left: 12px; right: 12px; transform: none; justify-content: center;
+    flex-wrap: wrap; max-width: calc(100vw - 24px);
+  }
+  .mode-btn { padding: 7px 10px; font-size: .7rem; }
+  .pin .lbl { font-size: .6rem; }
+  #zone-card {
+    position: fixed; left: 12px !important; right: 12px; top: auto !important;
+    bottom: calc(max(16px, env(safe-area-inset-bottom)) + 66px); width: auto;
+  }
+}

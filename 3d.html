@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>KneeUp · 护具 3D 实验室</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/three.css">
+</head>
+<body>
+
+<canvas id="stage" aria-label="KneeUp 护具 3D 视图"></canvas>
+
+<!-- 四锚点 DOM 图钉层（heat 模式淡入，坐标由 js/three/scene.js 每帧投影） -->
+<div id="pins" aria-hidden="true"></div>
+
+<!-- 左上：标题 + 返回落地页 -->
+<header class="hud" id="title">
+  <a class="back" href="index.html">← 返回落地页</a>
+  <b>KneeUp · 护具 3D 实验室</b>
+  <small>自研护具 CAD 直转 Web · 拖拽旋转 / 双指缩放</small>
+</header>
+
+<!-- 模式按钮组（CONTRACT 四值；inner 本轮禁用占位） -->
+<nav class="hud" id="modes" role="group" aria-label="视图模式">
+  <button class="mode-btn is-on" data-mode="product">产品特写<span>PRODUCT</span></button>
+  <button class="mode-btn" data-mode="wear">佩戴关系<span>WEAR</span></button>
+  <button class="mode-btn" data-mode="inner" disabled title="内部结构 · 本轮预留占位">内部结构<span>INNER</span></button>
+  <button class="mode-btn" data-mode="heat">结构热点<span>HEAT</span></button>
+</nav>
+
+<p class="hud" id="hint">自动缓旋 · 拖拽旋转 / 滚轮缩放</p>
+
+<!-- 右下：合规角标 + 模型标注 -->
+<aside class="hud" id="corner">
+  <span class="tag">解剖示意 · ANATOMY SCHEMATIC</span>
+  <span class="meta">模型：自研 CAD 瘦身 GLB · 12.8万面</span>
+</aside>
+
+<!-- 锚点结构卡片（K10 gearAtlas 中英文案） -->
+<aside class="hud" id="zone-card" hidden>
+  <button id="zc-close" aria-label="关闭">×</button>
+  <header><b id="zc-title"></b><span class="en" id="zc-en"></span></header>
+  <p id="zc-cn"></p>
+  <p class="en-copy" id="zc-en-copy"></p>
+  <span class="ku-chip">产品结构示意 PRODUCT SCHEMATIC</span>
+</aside>
+
+<div id="loading"><span>LOADING · 载入护具模型…</span></div>
+
+<!-- 兜底：WebGL 不可用 / 微信 UA / 模型载入失败 → 渲染图轮播 -->
+<div id="fallback" hidden>
+  <figure class="fb-frame">
+    <img src="assets/img/p2-1.jpg" alt="KneeUp 护具产品渲染图 · 侧视" class="is-on">
+    <img src="assets/img/p2-3.jpg" alt="KneeUp 护具产品渲染图 · 细节">
+  </figure>
+  <div class="fb-card hud">
+    <b>KneeUp 护具 · 产品渲染</b>
+    <p id="fb-reason">当前浏览器不支持 WebGL，已切换为产品渲染图轮播。</p>
+    <a class="btn ghost" href="index.html">返回落地页</a>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/three.module.js",
+  "three/addons/": "./vendor/three/addons/"
+} }
+</script>
+<script type="module" src="js/three/scene.js"></script>
+</body>
+</html>
