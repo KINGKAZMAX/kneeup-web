@@ -126,6 +126,8 @@ html, body { height: 100%; overflow: hidden; }
 /* ---- 移动端 ---- */
 @media (max-width: 767px) {
   #hint { display: none; }
+  #title { max-width: 46vw; overflow: hidden; }
+  #title b { white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
   #corner { top: max(14px, env(safe-area-inset-top)); right: 14px; bottom: auto; }
   #modes {
     left: 12px; right: 12px; transform: none; justify-content: center;

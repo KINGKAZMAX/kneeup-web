@@ -1,7 +1,3 @@
-(node:11895) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/mekzenx2/Documents/AIx%20Origin%20%E5%86%A0%E5%86%9B%E6%94%BB%E7%95%A5/%E9%A1%B9%E7%9B%AE%E4%BA%8C/%E5%89%8D%E7%AB%AF/kneeup-web/js/ai/pose-engine.js is not specified and it doesn't parse as CommonJS.
-Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
-To eliminate this warning, add "type": "module" to /Users/mekzenx2/package.json.
-(Use `node --trace-warnings ...` to show where the warning was created)
 PASS  kneeAngle 共线直立 = 180°
 PASS  kneeAngle 直角 = 90°
 PASS  kneeAngle 60° 用例

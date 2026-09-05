@@ -1,0 +1,56 @@
+PASS  基准 flat=10
+PASS  基准 standup=25
+PASS  基准 uphill=35
+PASS  基准 stairs=30
+PASS  基准 downhill=20
+PASS  未知动作回退 flat 基准
+PASS  缺省输入 → flat 基准且无修正
+PASS  SI=10% 不加
+PASS  SI=14% 不满一档不加
+PASS  SI=15% +3pp
+PASS  SI=20% +6pp
+PASS  SI=26% +9pp（向下取档）
+PASS  SI 修正原因文案携带
+PASS  fatigue=60 不加
+PASS  fatigue=69 不满一档不加
+PASS  fatigue=70 +2pp
+PASS  fatigue=90 +6pp
+PASS  fatigue=100 +8pp
+PASS  组合修正 35+6+4=45  level=45
+PASS  硬上限 56→50 且 capped  level=50 raw=56
+PASS  cap 不丢修正明细
+PASS  level 恒在 [0,50]
+PASS  baseline 数字覆盖
+PASS  baseline 按动作映射
+PASS  baseline 映射缺键回退规则表
+PASS  baseline 仍受硬上限约束
+PASS  baseline 之上仍叠加修正
+PASS  带膝角/速度输入不崩
+PASS  kneeAngle/speed 缺失不影响
+PASS  slew 上行 1s 内 ≤10pp
+PASS  slew 0.5s 只走 5pp
+PASS  slew 下行同样限速
+PASS  slew 步长大于差值时直达
+PASS  slew prev 无效时直达目标
+PASS  slew dt=0 不动
+PASS  首次调用直接建立基准  level=10
+PASS  100ms 内仅 +1pp（限速）  level=11
+PASS  dt>1s 截断为 +10pp  level=21
+PASS  分段爬升后到达目标 35  d2b=31 d2c=35
+PASS  下行 0.2s 仅 -2pp  level=33
+PASS  dt 截断 1s（+10pp）  level=20
+PASS  maxRate 可配（4pp/s）  level=12
+PASS  修正明细随 update 输出
+PASS  默认速率常量 10pp/s
+PASS  规则表快照
+PASS  sim 帧结构
+PASS  sim 同 now 幂等
+PASS  sim 膝角在场景区间内
+PASS  切场景后活动切换
+PASS  疲劳跨场景延续不重置  fatigue=23.7
+PASS  疲劳随时间累积
+PASS  未知场景名忽略
+PASS  端到端：上坡基准 35 建立
+PASS  端到端：输出被速率限制平滑  Δ=0.00
+────────────────────────────────────────────────
+RESULT  54 passed, 0 failed
