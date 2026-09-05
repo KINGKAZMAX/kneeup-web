@@ -2,9 +2,11 @@
 
 ## v2 修订（2026-09-06）
 本轮由单一实现者施工，获授权可越 W1–W4 边界；改动文件清单：
-- 修复：`js/router.js`（命名导入失配修复 + 注册 `#/assist` 路由）、`apps.html`（导航新增「助力等级」入口 chip）
+- 修复：`js/router.js`（命名导入失配修复——视图均导出 `render`，改 `import { render as renderX }`；并注册 `#/assist` 路由）、`vendor/three/three.core.js`（补齐 three.module.js@0.185.1 缺失依赖，原 404 致 3D 模块图加载失败）、`js/three/scene.js`（`const e` 重复赋值 TypeError 致恒入兜底，改 `let`）
 - 新增：`js/ai/assist-engine.js`、`js/ai/assist-engine.test.mjs`、`js/ai/assist-sim.js`、`js/views/assist.js`
-- 样式：`css/apps.css`（assist 面板样式 + 移动端修复）、视巡检结果可能涉及 `css/landing.css`/`css/three.css`
+- 样式与移动端巡检修复：`css/apps.css`（assist 面板样式 + 顶栏/chip/fchip/滑杆/输入框 44px 触控 + 顶栏手机折行）、`css/landing.css`（demo 卡 grid minmax + 导航 44px）、`css/game.css`（自评按钮 44px 折行，修手机横向溢出）、`css/three.css`（mode-btn/zc-close 44px）
+- 视图小修：`js/views/screen.js`（左轴 1.0 刻度 bug）、`js/views/patient.js`（streak 点阵 button→span 非交互）、`js/body/bodymap.js`（区域隐形命中垫扩大）、`apps.html`（viewport-fit=cover + 导航新增「助力等级」chip）
+- 测试资产：`docs/test-output/`（audit-frame.html 巡检框架 + 截图 + 引擎测试输出）
 - **术语豁免**：用户明确要求新增「Assist Level 助力等级」功能，assist 面板内（含其导航入口 chip）允许使用「助力等级 / Assist Level」；其余禁词 v3 纪律不变。
 - 版本注记由「2026-09-05 冻结」升至 v2。
 

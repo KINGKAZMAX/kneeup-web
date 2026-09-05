@@ -4,6 +4,7 @@ import { render as renderCoach } from './views/coach.js';
 import { render as renderScreen } from './views/screen.js';
 import { render as renderGameEmbed } from './views/game-embed.js';
 import { render as renderBody } from './views/body.js';
+import { render as renderAssist } from './views/assist.js';
 
 const routes = {
   patient: { title: '用户端', render: renderPatient },
@@ -11,6 +12,7 @@ const routes = {
   screen: { title: 'AI数据屏', render: renderScreen },
   game: { title: '训练游戏', render: renderGameEmbed },
   body: { title: '身体记录', render: renderBody },
+  assist: { title: '助力等级', render: renderAssist },
 };
 
 let cleanup = null;

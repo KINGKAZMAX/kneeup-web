@@ -230,3 +230,39 @@ input[type=text]:focus-visible { outline: 2px solid var(--accent); outline-offse
 .game-ph h3 { font-size: 1.2rem; margin-bottom: 10px; }
 .game-ph .lead { margin: 0 auto 20px; }
 .game-ph .quick-links { justify-content: center; }
+
+/* ---------- Assist Level 助力等级面板 ---------- */
+.as-scn { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.as-scn .fchip { cursor: pointer; }
+.as-scn-en { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .1em; opacity: .7; margin-left: 6px; }
+.as-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 18px; align-items: stretch; margin-bottom: 18px; }
+@media (max-width: 920px) { .as-grid { grid-template-columns: 1fr; } }
+.as-gauge-panel { position: relative; display: flex; flex-direction: column; }
+.as-chip { position: absolute; top: 14px; right: 14px; }
+.as-gauge { width: 100%; height: 300px; display: block; }
+@media (max-width: 640px) { .as-gauge { height: 260px; } }
+.as-readout { font-family: var(--font-mono); font-size: .74rem; color: var(--muted); text-align: center; margin-top: 4px; }
+
+.as-factors { display: flex; flex-direction: column; gap: 10px; }
+.as-factor { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; }
+.as-factor .k { font-size: .74rem; color: var(--muted); white-space: nowrap; order: 1; }
+.as-factor .v { font-family: var(--font-mono); color: var(--accent); font-size: 1.05rem; white-space: nowrap; order: 3; }
+.as-factor .v.badge { font-size: .8rem; color: var(--ink); background: var(--accent-mist); border: 1px solid rgba(67, 118, 235, .4); padding: 4px 10px; border-radius: 999px; }
+.as-factor .bar { position: relative; flex: 1 1 70px; min-width: 56px; height: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; order: 2; }
+.as-factor .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 999px; }
+.as-factor .bar em { position: absolute; top: -2px; bottom: -2px; width: 1.5px; background: var(--warn); }
+@media (max-width: 640px) {
+  .as-factors { display: grid; grid-template-columns: 1fr 1fr; }
+  .as-factor { flex-wrap: wrap; }
+  .as-factor .bar { flex-basis: 100%; order: 4; }
+}
+
+.as-trend { height: 180px; }
+@media (max-width: 640px) { .as-trend { height: 148px; } }
+
+.as-feed { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.as-feed li { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; font-size: .82rem; color: var(--ink-dim); }
+.as-feed li .t { font-family: var(--font-mono); font-size: .68rem; color: var(--muted); }
+.as-feed li .pp { font-family: var(--font-mono); font-weight: 700; color: var(--accent); }
+.as-feed li.cap .pp { color: var(--danger); }
+.as-feed li.muted { color: var(--muted); }
