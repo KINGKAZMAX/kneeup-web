@@ -1,0 +1,44 @@
+(node:11895) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/mekzenx2/Documents/AIx%20Origin%20%E5%86%A0%E5%86%9B%E6%94%BB%E7%95%A5/%E9%A1%B9%E7%9B%AE%E4%BA%8C/%E5%89%8D%E7%AB%AF/kneeup-web/js/ai/pose-engine.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/mekzenx2/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS  kneeAngle 共线直立 = 180°
+PASS  kneeAngle 直角 = 90°
+PASS  kneeAngle 60° 用例
+PASS  kneeAngle 一般角在 (0,180]  109.65°
+PASS  angle 为旧 demo 同名导出
+PASS  MedianBuffer 野值被中值剔除  out=171
+PASS  MedianBuffer 滑窗长度受限且已满
+PASS  MedianBuffer 滑窗后中位数（上中位，照抄旧 demo）
+PASS  MedianBuffer clear 后无值
+PASS  symmetry(170,170) = 100
+PASS  symmetry 满偏 60° 差 = 0
+PASS  symmetry(170,140) = 50
+PASS  symmetry 超 60° 差截断为 0
+PASS  正弦 3s/rep × 10s → 3 reps  count=3
+PASS  rep 谷底深度 ≈ 90°  90.0,90.0,90.0
+PASS  rep dwell ≥ 400ms  1500,1500,1500
+PASS  首 rep 时刻在 ~2.6-2.7s  2666.6666666666647ms
+PASS  相位机回 UP
+PASS  浅蹲未破 100° → 0 reps
+PASS  抖动序列 → 0 reps（谷底 <400ms）
+PASS  慢蹲停留 800ms → 1 rep  dwell=1950ms
+PASS  默认阈值 DOWN<100 时浅蹲标记恒 false（谷底必 <100<shallowT110）
+PASS  谷底 112°>110 → 浅蹲标记  depth=112.0
+PASS  RepCounter 默认阈值符合 CONTRACT
+PASS  qualityScore 满分=100
+PASS  qualityScore 深度出带衰减
+PASS  qualityScore 对称度差拉低（45 分项归零→55）
+PASS  qualityScore 节奏偏差≥80% 该项归零（→80）
+PASS  qualityScore 带内即满深度分（105°∈[100,140]）
+PASS  qualityScore 单项输入归一化满分
+PASS  qualityScore 无输入 → null
+PASS  qualityScore 结果域 [0,100]
+PASS  OneEuro 噪声 MAE 下降 ≥60%  raw=3.76° → filtered=1.22°
+PASS  OneEuro 输出不发散（|out| 有界）
+PASS  OneEuro 阶跃 150ms 内收敛  133.33333333333334ms
+PASS  OneEuro 参数可调且正常出值
+PASS  clamp 限幅
+PASS  kneeAngle 重合关键点 → 180（中性）
+────────────────────────────────────────────────
+RESULT  38 passed, 0 failed

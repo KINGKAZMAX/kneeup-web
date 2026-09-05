@@ -1,0 +1,123 @@
+/* game.css — 「膝望升空 KNEE-UP LIFT」HUD（W2 所有；仅用 tokens.css 变量，不新造色值）
+   两版布局：桌面 = 右侧竖轨（HUD rail）；≤1023px = 手机吸底横条。 */
+
+.kug { display: flex; flex-direction: column; gap: 10px; font-size: .85rem; color: var(--ink-dim); }
+
+/* ── 顶栏：标题 + 模式 chip + 状态 chip + 计划 chip ── */
+.kug-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.kug-title { font-family: var(--font-display); font-weight: 700; color: var(--ink); letter-spacing: -.01em; }
+.kug-state {
+  font-family: var(--font-mono); font-size: .66rem; letter-spacing: .12em;
+  padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted);
+}
+.kug-state.live { color: var(--accent); border-color: rgba(67,118,235,.5); }
+.kug-state.paused { color: var(--warn); border-color: rgba(240,179,78,.4); }
+.kug-state.safe { color: var(--danger); border-color: rgba(229,84,75,.5); }
+.kug-note { font-size: .7rem; color: var(--muted); }
+
+/* ── 主体：桌面 竖轨（arc 左 / ship 右）；手机纵向堆叠 ── */
+.kug-main { display: flex; gap: 12px; }
+.kug-left { flex: 0 0 108px; display: flex; flex-direction: column; gap: 8px; }
+.kug-baseline {
+  font-family: var(--font-mono); font-size: .64rem; letter-spacing: .04em; line-height: 1.5;
+  border: 1px dashed var(--line); border-radius: 8px; padding: 6px 8px; color: var(--muted);
+}
+.kug-baseline.locked { border-style: solid; color: var(--accent); border-color: rgba(67,118,235,.4); }
+
+/* 目标弧（薄版 = 纵向刻度带）：60–190° 量程 */
+.kug-arc { position: relative; height: 200px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); overflow: hidden; }
+.kug-zone { position: absolute; left: 0; right: 0; background: var(--accent-mist); border-top: 1px solid rgba(67,118,235,.35); border-bottom: 1px solid rgba(67,118,235,.35); }
+.kug-perfect { position: absolute; left: 0; right: 0; background: var(--accent-veil); }
+.kug-red { position: absolute; left: 0; right: 0; background: rgba(229,84,75,.12); }
+.kug-ptr { position: absolute; left: 0; right: 26%; height: 2px; top: var(--ptr, 50%); background: var(--accent); box-shadow: 0 0 8px var(--accent); transition: top .08s linear; }
+.kug-ptr::after { content: attr(data-a); position: absolute; right: -30px; top: -7px; font-family: var(--font-mono); font-size: .66rem; color: var(--accent); }
+.kug-arc .lbl { position: absolute; right: 4px; font-family: var(--font-mono); font-size: .58rem; color: var(--muted); }
+
+/* 充能条 */
+.kug-charge { height: 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
+.kug-charge i { display: block; height: 100%; width: calc(var(--charge, 0) * 100%); background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width .12s linear; }
+.kug-charge-lbl { font-family: var(--font-mono); font-size: .6rem; color: var(--muted); letter-spacing: .1em; }
+
+/* ── 飞艇轨道（CSS 方块飞艇 + 尾焰渐变 + 云层 + 冲线） ── */
+.kug-right { flex: 1; min-width: 0; }
+.kug-track { position: relative; height: 236px; border-radius: 10px; background: linear-gradient(180deg, var(--panel) 0%, var(--bg-1) 100%); border: 1px solid var(--line); overflow: hidden; }
+.kug-finish { position: absolute; top: 6px; left: 0; right: 0; border-top: 2px dashed rgba(67,118,235,.55); }
+.kug-finish span { position: absolute; top: 3px; right: 6px; font-family: var(--font-mono); font-size: .56rem; letter-spacing: .14em; color: var(--accent); }
+.kug-notch { position: absolute; left: 8%; width: 14%; height: 1px; background: var(--line); }
+.kug-notch.hit { background: var(--accent); box-shadow: 0 0 6px rgba(67,118,235,.8); }
+.kug-cloud { position: absolute; left: 55%; right: 6%; height: 26px; border-radius: 999px; background: var(--panel-2); filter: blur(7px); opacity: .8; }
+.kug-ship {
+  position: absolute; left: 22%; width: 42px; height: 42px; border-radius: 10px;
+  background: var(--panel-2); border: 1.5px solid var(--accent);
+  bottom: calc(8px + var(--prog, 0) * (100% - 66px)); transition: bottom .5s cubic-bezier(.2,.8,.2,1);
+}
+.kug-ship::before { /* 舱灯 */ content: ""; position: absolute; inset: 9px; border-radius: 4px; background: var(--accent-veil); }
+.kug-ship::after { /* 尾焰渐变（accent 系，warn 色仅留给安全语义） */ content: ""; position: absolute; top: 100%; left: 12px; width: 18px; height: 26px; border-radius: 0 0 10px 10px;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 45%, transparent 100%); filter: blur(1px);
+  animation: kug-flame .5s ease-in-out infinite alternate; opacity: calc(.25 + var(--charge, 0) * .75); }
+@keyframes kug-flame { from { transform: scaleY(.75); } to { transform: scaleY(1.15); } }
+.kug-track.danger { border-color: var(--danger); box-shadow: inset 0 0 0 1px var(--danger); }
+.kug-track.win .kug-ship { border-color: var(--safe); }
+
+/* ── 底栏：数据 + 自评 + 暂停 ── */
+.kug-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--font-mono); font-size: .74rem; }
+.kug-bar b { color: var(--ink); font-weight: 600; }
+.kug-bar .num { color: var(--accent); }
+.kug-combo { color: var(--accent-2); }
+.kug-spacer { flex: 1; }
+.kug-btn {
+  font-family: var(--font-body); font-size: .72rem; min-height: 34px; padding: 5px 12px; cursor: pointer;
+  border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-dim);
+}
+.kug-btn:hover { color: var(--ink); border-color: var(--accent); }
+.kug-btn.solid { background: var(--primary); border-color: transparent; color: #fff; }
+.kug-btn.solid:hover { background: var(--primary-hi); }
+.kug-btn.warn { color: var(--warn); border-color: rgba(240,179,78,.4); }
+.kug-painrow { display: inline-flex; gap: 4px; }
+.kug-painrow .kug-btn { min-width: 34px; padding: 5px 6px; font-family: var(--font-mono); }
+.kug-painrow .kug-btn.on { color: var(--warn); border-color: rgba(240,179,78,.6); }
+
+/* 警示条（warn=谨慎 / danger=超限，仅安全语义） */
+.kug-alert { display: none; border-radius: 8px; padding: 8px 10px; font-size: .78rem; border: 1px solid rgba(240,179,78,.45); color: var(--warn); background: rgba(240,179,78,.07); }
+.kug-alert.danger { display: block; border-color: rgba(229,84,75,.55); color: var(--danger); background: rgba(229,84,75,.08); }
+.kug-alert.show { display: block; }
+
+/* ── 弹层（暂停 / 安全暂停 / 组间 / 自评提示 / 结算） ── */
+.kug-ovl { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; z-index: 5; background: rgba(11,12,14,.82); backdrop-filter: blur(3px); }
+.kug-ovl.show { display: flex; }
+.kug-card { text-align: center; padding: 22px 26px; max-width: 420px; }
+.kug-card h3 { color: var(--ink); margin-bottom: 6px; }
+.kug-card p { font-size: .82rem; color: var(--ink-dim); margin-bottom: 14px; }
+.kug-cta { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* 结算（K7 §三层级：状态行 → 4 大数字 → 次级行 → 洞察句 → CTA） */
+.kug-sum-line { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+.kug-sum-line .ok { color: var(--accent); }
+.kug-bigs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 14px 0 8px; }
+.kug-big { text-align: center; }
+.kug-big .v { font-family: var(--font-mono); font-size: clamp(1.3rem, 2.2vw, 1.9rem); color: var(--accent); line-height: 1.1; }
+.kug-big .k { font-family: var(--font-mono); font-size: .56rem; letter-spacing: .12em; color: var(--muted); }
+.kug-sub { font-size: .72rem; color: var(--muted); margin-bottom: 6px; }
+.kug-insight { font-size: .8rem; color: var(--ink-dim); border-top: 1px solid var(--line); padding-top: 10px; margin-bottom: 16px; }
+
+/* ── 手机吸底版（≤1023px）：轨道横置、量程横条 ── */
+@media (max-width: 1023px) {
+  .kug { gap: 8px; }
+  .kug-main { flex-direction: column; }
+  .kug-left { flex: auto; flex-direction: row; align-items: center; gap: 10px; }
+  .kug-baseline { flex: 1; }
+  .kug-arc { height: 14px; flex: 1.4; border-radius: 999px; }
+  .kug-ptr { left: var(--ptr, 50%); right: auto; width: 2px; height: 100%; top: 0 !important; transition: left .08s linear; }
+  .kug-ptr::after { right: auto; left: 5px; top: -3px; }
+  .kug-arc .lbl { display: none; }
+  .kug-charge { width: 90px; }
+  .kug-track { height: 84px; }
+  .kug-finish { top: auto; bottom: 6px; left: 6px; right: 30%; border-top: none; border-left: 2px dashed rgba(67,118,235,.55); }
+  .kug-finish span { top: auto; bottom: 8px; right: auto; left: -2px; }
+  .kug-cloud { left: 8%; right: auto; width: 60px; height: 22px; top: 8px; }
+  .kug-ship { bottom: auto; left: calc(8px + var(--prog, 0) * (100% - 66px)); top: 14px; transition: left .5s cubic-bezier(.2,.8,.2,1); }
+  .kug-ship::after { top: 12px; left: 100%; width: 24px; height: 16px; border-radius: 0 10px 10px 0;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 45%, transparent 100%); animation-name: kug-flame-x; }
+  @keyframes kug-flame-x { from { transform: scaleX(.75); } to { transform: scaleX(1.15); } }
+  .kug-bigs { grid-template-columns: repeat(4, 1fr); }
+}
