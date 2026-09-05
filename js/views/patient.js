@@ -46,7 +46,7 @@ function dotGrid(perDay) {
     const c = perDay.get(k) || 0;
     const lv = c >= 3 ? 3 : c;
     const lbl = `${d.getMonth() + 1}月${d.getDate()}日，${c > 0 ? `完成 ${c} 次训练` : '无记录'}`;
-    cells.push(`<button type="button" class="streak-dot ${c > 0 ? `on lv${lv}` : ''} ${k === todayKey ? 'today' : ''}" aria-label="${lbl}" title="${lbl}"></button>`);
+    cells.push(`<span class="streak-dot ${c > 0 ? `on lv${lv}` : ''} ${k === todayKey ? 'today' : ''}" role="img" aria-label="${lbl}" title="${lbl}"></span>`);
   }
   return cells.join('');
 }

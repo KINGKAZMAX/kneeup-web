@@ -66,15 +66,15 @@
 .kug-combo { color: var(--accent-2); }
 .kug-spacer { flex: 1; }
 .kug-btn {
-  font-family: var(--font-body); font-size: .72rem; min-height: 34px; padding: 5px 12px; cursor: pointer;
+  font-family: var(--font-body); font-size: .72rem; min-height: 44px; padding: 5px 16px; cursor: pointer;
   border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-dim);
 }
 .kug-btn:hover { color: var(--ink); border-color: var(--accent); }
 .kug-btn.solid { background: var(--primary); border-color: transparent; color: #fff; }
 .kug-btn.solid:hover { background: var(--primary-hi); }
 .kug-btn.warn { color: var(--warn); border-color: rgba(240,179,78,.4); }
-.kug-painrow { display: inline-flex; gap: 4px; }
-.kug-painrow .kug-btn { min-width: 34px; padding: 5px 6px; font-family: var(--font-mono); }
+.kug-painrow { display: inline-flex; gap: 4px; flex-wrap: wrap; max-width: 100%; }
+.kug-painrow .kug-btn { min-width: 44px; min-height: 44px; padding: 5px 6px; font-family: var(--font-mono); }
 .kug-painrow .kug-btn.on { color: var(--warn); border-color: rgba(240,179,78,.6); }
 
 /* 警示条（warn=谨慎 / danger=超限，仅安全语义） */

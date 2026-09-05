@@ -71,46 +71,57 @@ function buildSvg() {
 
     <!-- 对侧对照（左腿整段覆盖） -->
     ${regionSvg('contra',
-      `<rect class="hit" data-dfill="transparent" x="106" y="306" width="34" height="288" rx="17" fill="transparent" stroke="${tok('--muted')}" stroke-dasharray="4 4"/>`,
+      `<rect x="102" y="306" width="42" height="288" rx="21" fill="transparent" pointer-events="all"/>
+       <rect class="hit" data-dfill="transparent" x="106" y="306" width="34" height="288" rx="17" fill="transparent" stroke="${tok('--muted')}" stroke-dasharray="4 4"/>`,
       '对侧对照', 123, 616, 123, 380)}
 
     <!-- 膝后（背面示意：斜纹虚线椭圆，垫在膝前点组之下） -->
     ${regionSvg('knee-posterior',
-      `<ellipse class="hit" data-dfill="url(#ku-hatch)" cx="122" cy="432" rx="14" ry="26" fill="url(#ku-hatch)" stroke="${tok('--muted')}" stroke-dasharray="3 3"/>
+      `<ellipse cx="122" cy="432" rx="18" ry="30" fill="transparent" pointer-events="all"/>
+       <ellipse cx="178" cy="432" rx="18" ry="30" fill="transparent" pointer-events="all"/>
+       <ellipse class="hit" data-dfill="url(#ku-hatch)" cx="122" cy="432" rx="14" ry="26" fill="url(#ku-hatch)" stroke="${tok('--muted')}" stroke-dasharray="3 3"/>
        <ellipse class="hit" data-dfill="url(#ku-hatch)" cx="178" cy="432" rx="14" ry="26" fill="url(#ku-hatch)" stroke="${tok('--muted')}" stroke-dasharray="3 3"/>`,
       '膝后·背面', 150, 478, 150, 390)}
 
     <!-- 髋（双侧大转子） -->
     ${regionSvg('hip',
-      `<circle class="hit" data-dfill="transparent" cx="111" cy="298" r="11" fill="transparent" stroke="${tok('--line')}"/>
+      `<circle cx="111" cy="298" r="17" fill="transparent" pointer-events="all"/>
+       <circle cx="189" cy="298" r="17" fill="transparent" pointer-events="all"/>
+       <circle class="hit" data-dfill="transparent" cx="111" cy="298" r="11" fill="transparent" stroke="${tok('--line')}"/>
        <circle class="hit" data-dfill="transparent" cx="189" cy="298" r="11" fill="transparent" stroke="${tok('--line')}"/>`,
       '髋', 70, 302, 70, 322)}
 
     <!-- 膝外侧（双膝外缘） -->
     ${regionSvg('knee-lateral',
-      `<ellipse class="hit" data-dfill="transparent" cx="110" cy="432" rx="8" ry="17" fill="transparent" stroke="${tok('--line')}"/>
+      `<ellipse cx="110" cy="432" rx="11" ry="20" fill="transparent" pointer-events="all"/>
+       <ellipse cx="190" cy="432" rx="11" ry="20" fill="transparent" pointer-events="all"/>
+       <ellipse class="hit" data-dfill="transparent" cx="110" cy="432" rx="8" ry="17" fill="transparent" stroke="${tok('--line')}"/>
        <ellipse class="hit" data-dfill="transparent" cx="190" cy="432" rx="8" ry="17" fill="transparent" stroke="${tok('--line')}"/>`,
       '膝外侧', 62, 436, 62, 456)}
 
     <!-- 膝内侧（双膝内缘） -->
     ${regionSvg('knee-medial',
-      `<ellipse class="hit" data-dfill="transparent" cx="135" cy="432" rx="8" ry="17" fill="transparent" stroke="${tok('--line')}"/>
+      `<ellipse cx="135" cy="432" rx="11" ry="20" fill="transparent" pointer-events="all"/>
+       <ellipse cx="165" cy="432" rx="11" ry="20" fill="transparent" pointer-events="all"/>
+       <ellipse class="hit" data-dfill="transparent" cx="135" cy="432" rx="8" ry="17" fill="transparent" stroke="${tok('--line')}"/>
        <ellipse class="hit" data-dfill="transparent" cx="165" cy="432" rx="8" ry="17" fill="transparent" stroke="${tok('--line')}"/>`,
       '膝内侧', 150, 520, 150, 540)}
 
     <!-- 膝前（髌面圆点组） -->
     ${regionSvg('knee-anterior',
-      `<circle class="hit" data-dfill="transparent" cx="122" cy="416" r="5" fill="transparent" stroke="${tok('--line')}"/>
-       <circle class="hit" data-dfill="transparent" cx="122" cy="433" r="6" fill="transparent" stroke="${tok('--line')}"/>
-       <circle class="hit" data-dfill="transparent" cx="122" cy="450" r="5" fill="transparent" stroke="${tok('--line')}"/>
-       <circle class="hit" data-dfill="transparent" cx="178" cy="416" r="5" fill="transparent" stroke="${tok('--line')}"/>
-       <circle class="hit" data-dfill="transparent" cx="178" cy="433" r="6" fill="transparent" stroke="${tok('--line')}"/>
-       <circle class="hit" data-dfill="transparent" cx="178" cy="450" r="5" fill="transparent" stroke="${tok('--line')}"/>`,
+      `<circle class="hit" data-dfill="transparent" cx="122" cy="416" r="9" fill="transparent" stroke="${tok('--line')}"/>
+       <circle class="hit" data-dfill="transparent" cx="122" cy="433" r="9" fill="transparent" stroke="${tok('--line')}"/>
+       <circle class="hit" data-dfill="transparent" cx="122" cy="450" r="9" fill="transparent" stroke="${tok('--line')}"/>
+       <circle class="hit" data-dfill="transparent" cx="178" cy="416" r="9" fill="transparent" stroke="${tok('--line')}"/>
+       <circle class="hit" data-dfill="transparent" cx="178" cy="433" r="9" fill="transparent" stroke="${tok('--line')}"/>
+       <circle class="hit" data-dfill="transparent" cx="178" cy="450" r="9" fill="transparent" stroke="${tok('--line')}"/>`,
       '膝前', 150, 500, 150, 500)}
 
     <!-- 踝（双外踝上方） -->
     ${regionSvg('ankle',
-      `<ellipse class="hit" data-dfill="transparent" cx="126" cy="568" rx="9" ry="13" fill="transparent" stroke="${tok('--line')}"/>
+      `<ellipse cx="126" cy="568" rx="13" ry="18" fill="transparent" pointer-events="all"/>
+       <ellipse cx="174" cy="568" rx="13" ry="18" fill="transparent" pointer-events="all"/>
+       <ellipse class="hit" data-dfill="transparent" cx="126" cy="568" rx="9" ry="13" fill="transparent" stroke="${tok('--line')}"/>
        <ellipse class="hit" data-dfill="transparent" cx="174" cy="568" rx="9" ry="13" fill="transparent" stroke="${tok('--line')}"/>`,
       '踝', 62, 572, 62, 592)}
   </svg>`;

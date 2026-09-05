@@ -105,7 +105,7 @@ export function render(root) {
     for (let i = 0; i <= 2; i++) {
       const y = Math.round(yL(i / 2)) + .5;
       ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
-      ctx.textAlign = 'right'; ctx.fillText(i / 2 ? '0.5' : (i ? '1.0' : '0'), x0 - 6, y + 3);
+      ctx.textAlign = 'right'; ctx.fillText(['0', '0.5', '1.0'][i], x0 - 6, y + 3);
     }
     [0, 50, 100, 150].forEach(v => {
       ctx.textAlign = 'left'; ctx.fillText(v + '°', x1 + 6, yR(v) + 3);

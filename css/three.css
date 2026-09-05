@@ -34,8 +34,8 @@ html, body { height: 100%; overflow: hidden; }
 .mode-btn {
   appearance: none; border: 1px solid transparent; background: transparent;
   color: var(--ink-dim); border-radius: 999px; padding: 7px 14px;
-  font-size: .78rem; min-height: 36px; cursor: pointer;
-  display: flex; align-items: baseline; gap: 6px; white-space: nowrap;
+  font-size: .78rem; min-height: 44px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
 }
 .mode-btn span { font-family: var(--font-mono); font-size: .56rem; letter-spacing: .1em; color: var(--muted); }
 .mode-btn:hover:not(:disabled):not(.is-on) { color: var(--ink); }
@@ -86,8 +86,8 @@ html, body { height: 100%; overflow: hidden; }
 #zone-card .en-copy { color: var(--muted); font-size: .66rem; }
 #zone-card .ku-chip { margin-top: 10px; }
 #zc-close {
-  position: absolute; top: 4px; right: 8px; appearance: none; border: 0; background: none;
-  color: var(--muted); font-size: 1rem; width: 26px; height: 26px; cursor: pointer; border-radius: 50%;
+  position: absolute; top: 0; right: 4px; appearance: none; border: 0; background: none;
+  color: var(--muted); font-size: 1.1rem; width: 44px; height: 44px; cursor: pointer; border-radius: 50%;
 }
 #zc-close:hover { color: var(--ink); background: var(--panel-2); }
 
