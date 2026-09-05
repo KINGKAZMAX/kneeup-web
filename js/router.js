@@ -1,9 +1,9 @@
-// hash 路由（#/patient|#/coach|#/screen|#/game|#/body）——切页销毁旧视图 + 滚动顶
-import { renderPatient } from './views/patient.js';
-import { renderCoach } from './views/coach.js';
-import { renderScreen } from './views/screen.js';
-import { renderGameEmbed } from './views/game-embed.js';
-import { renderBody } from './views/body.js';
+// hash 路由（#/patient|#/coach|#/screen|#/game|#/body|#/assist）——切页销毁旧视图 + 滚动顶
+import { render as renderPatient } from './views/patient.js';
+import { render as renderCoach } from './views/coach.js';
+import { render as renderScreen } from './views/screen.js';
+import { render as renderGameEmbed } from './views/game-embed.js';
+import { render as renderBody } from './views/body.js';
 
 const routes = {
   patient: { title: '用户端', render: renderPatient },

@@ -1,4 +1,12 @@
-# CONTRACT.md — kneeup-web 施工契约（2026-09-05 冻结；改动需三线同意并 bump 版本）
+# CONTRACT.md — kneeup-web 施工契约（v2 · 2026-09-06 修订）
+
+## v2 修订（2026-09-06）
+本轮由单一实现者施工，获授权可越 W1–W4 边界；改动文件清单：
+- 修复：`js/router.js`（命名导入失配修复 + 注册 `#/assist` 路由）、`apps.html`（导航新增「助力等级」入口 chip）
+- 新增：`js/ai/assist-engine.js`、`js/ai/assist-engine.test.mjs`、`js/ai/assist-sim.js`、`js/views/assist.js`
+- 样式：`css/apps.css`（assist 面板样式 + 移动端修复）、视巡检结果可能涉及 `css/landing.css`/`css/three.css`
+- **术语豁免**：用户明确要求新增「Assist Level 助力等级」功能，assist 面板内（含其导航入口 chip）允许使用「助力等级 / Assist Level」；其余禁词 v3 纪律不变。
+- 版本注记由「2026-09-05 冻结」升至 v2。
 
 ## 模块所有权（谁写哪个文件，禁止越界）
 - W1：`index.html`、`css/landing.css`
