@@ -46,7 +46,7 @@ h2 { font-size: clamp(1.6rem, 4vw, 2.6rem); }
   font-family: var(--font-mono); font-size: .68rem; letter-spacing: .08em;
   padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted);
 }
-.ku-chip.sim { color: var(--warn); border-color: rgba(240, 179, 78, .4); }
+.ku-chip.sim { color: var(--muted); border-color: var(--line-strong); }
 .ku-chip.sim::before { content: "○"; }
 .ku-chip.live { color: var(--accent); border-color: rgba(67, 118, 235, .5); }
 .ku-chip.live::before { content: "●"; }

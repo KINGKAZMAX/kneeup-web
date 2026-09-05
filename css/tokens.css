@@ -1,25 +1,60 @@
-/* KneeUp 设计 token 正本 v2（C11 定稿）——碳黑×钴蓝，禁绿/青；全站唯一来源 */
+/* KneeUp 设计 token ——严格对齐正本《design/UIUX配色规范-碳黑钴蓝-v1.md》（用户锁定版）
+   唯一色相律：钴蓝+碳黑+白；状态三色仅限安全语义；图表系列顺序 4376EB→9DB8F7→8B909A→白虚线 */
 :root {
-  /* 正本色 */
-  --bg-0: #0B0C0E;          /* 页面底 carbon-950 */
-  --bg-1: #141518;          /* 区块交替 carbon-900 */
-  --panel: #1A1B1F;         /* 卡片 carbon-850 */
-  --panel-2: #1C1E24;       /* 卡片内嵌 */
-  --primary: #2144B2;       /* 主品牌蓝 cobalt-600：CTA 底 */
-  --primary-hi: #2E50AB;    /* 主色 hover */
-  --accent: #4376EB;        /* 电光钴蓝 cobalt-300：数据/高亮/下划线 */
-  --accent-veil: rgba(67, 118, 235, .12);  /* 高亮底纹 */
-  --accent-mist: rgba(67, 118, 235, .06);  /* 极淡底 */
-  --blue-glow: rgba(33, 68, 178, .08);     /* 全站唯一环境光（径向，仅 body 顶部一处） */
-  --ink: #FFFFFF;
-  --ink-dim: #C7CAD1;
-  --muted: #8B909A;
-  --warn: #F0B34E;          /* 仅安全语义三用途：警示/待关注/模拟角标之外的谨慎态 */
-  --danger: #E5544B;        /* 仅角度超限等安全语义 */
-  --line: rgba(255, 255, 255, .09);
+  /* 碳黑中性 */
+  --carbon-950: #0B0C0E;   /* 页面画布 */
+  --carbon-900: #141518;   /* 分区背景 */
+  --carbon-850: #1A1B1F;   /* 卡片 surface-1 */
+  --carbon-800: #222327;   /* 弹层/抬升面 surface-2 */
+  --carbon-700: #2B2D33;   /* 默认描边 */
+  --carbon-600: #3B3E45;   /* 强描边 */
+  --gray-400: #8B909A;     /* 辅助文字/第3系列/坐标轴 */
+  --gray-200: #C7CAD1;     /* 正文 */
+  --white: #FFFFFF;
+
+  /* 钴蓝家族（唯一色相） */
+  --cobalt-900: #152B5C;   /* 渐变终点/按压态 */
+  --cobalt-800: #163487;   /* 深填充/表头 */
+  --cobalt-700: #0C3EA9;   /* 实心块/徽章底 */
+  --cobalt-600: #2144B2;   /* 主品牌：主按钮/链接/当前态 */
+  --cobalt-500: #2E50AB;   /* 悬停态 */
+  --cobalt-400: #375AD4;   /* 渐变起点/数据高亮 */
+  --cobalt-300: #4376EB;   /* 电光高光：焦点/发光/下划线 */
+  --cobalt-150: #9DB8F7;   /* 第二数据系列/蓝上浅字 */
+  --gradient-panel: linear-gradient(180deg, #375AD4, #153479); /* 焦点面板专用，普通卡片禁用 */
+
+  /* 状态三色（仅限：安全/成功、代偿警告、超限警报、风险分级、状态LED；禁图表系列与装饰） */
+  --status-safe: #2FBF83;
+  --status-warn: #F0B34E;
+  --status-danger: #E5544B;
+  --status-safe-bg: rgba(47, 191, 131, .10);
+  --status-warn-bg: rgba(240, 179, 78, .10);
+  --status-danger-bg: rgba(229, 84, 75, .12);
+
+  /* ===== 语义别名（页面代码用这套名字，值指向正本） ===== */
+  --bg-0: var(--carbon-950);
+  --bg-1: var(--carbon-900);
+  --panel: var(--carbon-850);
+  --panel-2: var(--carbon-800);
+  --line: var(--carbon-700);
+  --line-strong: var(--carbon-600);
+  --primary: var(--cobalt-600);
+  --primary-hi: var(--cobalt-500);
+  --accent: var(--cobalt-300);
+  --accent-2: var(--cobalt-150);
+  --accent-3: var(--gray-400);
+  --accent-veil: rgba(67, 118, 235, .12);
+  --accent-mist: rgba(67, 118, 235, .06);
+  --blue-glow: rgba(67, 118, 235, .06);   /* 全站唯一环境光，透明度 .06 为正本定值 */
+  --ink: var(--white);
+  --ink-dim: var(--gray-200);
+  --muted: var(--gray-400);
+  --warn: var(--status-warn);             /* 仅安全语义 */
+  --danger: var(--status-danger);         /* 仅超限/警报 */
+  --safe: var(--status-safe);             /* 仅安全/成功语义 */
   --radius: 16px;
 
-  /* 兼容别名（组件迁移用） */
+  /* 兼容别名 */
   --background: var(--bg-0);
   --card: var(--panel);
   --border: var(--line);
@@ -27,7 +62,7 @@
   --ring: var(--accent);
   --quiet: var(--muted);
 
-  /* 字体：vendor 只装 Space Grotesk 700 + JetBrains Mono，其余系统回退 */
+  /* 字体（正本 §三.9：中文 PingFang SC/Noto Sans SC，英文标题 Space Grotesk，数字 mono） */
   --font-display: "Space Grotesk", -apple-system, "Noto Sans SC", "PingFang SC", sans-serif;
   --font-body: -apple-system, "Inter", "Noto Sans SC", "PingFang SC", "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
