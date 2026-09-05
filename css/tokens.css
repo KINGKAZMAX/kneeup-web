@@ -1,0 +1,34 @@
+/* KneeUp 设计 token 正本 v2（C11 定稿）——碳黑×钴蓝，禁绿/青；全站唯一来源 */
+:root {
+  /* 正本色 */
+  --bg-0: #0B0C0E;          /* 页面底 carbon-950 */
+  --bg-1: #141518;          /* 区块交替 carbon-900 */
+  --panel: #1A1B1F;         /* 卡片 carbon-850 */
+  --panel-2: #1C1E24;       /* 卡片内嵌 */
+  --primary: #2144B2;       /* 主品牌蓝 cobalt-600：CTA 底 */
+  --primary-hi: #2E50AB;    /* 主色 hover */
+  --accent: #4376EB;        /* 电光钴蓝 cobalt-300：数据/高亮/下划线 */
+  --accent-veil: rgba(67, 118, 235, .12);  /* 高亮底纹 */
+  --accent-mist: rgba(67, 118, 235, .06);  /* 极淡底 */
+  --blue-glow: rgba(33, 68, 178, .08);     /* 全站唯一环境光（径向，仅 body 顶部一处） */
+  --ink: #FFFFFF;
+  --ink-dim: #C7CAD1;
+  --muted: #8B909A;
+  --warn: #F0B34E;          /* 仅安全语义三用途：警示/待关注/模拟角标之外的谨慎态 */
+  --danger: #E5544B;        /* 仅角度超限等安全语义 */
+  --line: rgba(255, 255, 255, .09);
+  --radius: 16px;
+
+  /* 兼容别名（组件迁移用） */
+  --background: var(--bg-0);
+  --card: var(--panel);
+  --border: var(--line);
+  --destructive: var(--danger);
+  --ring: var(--accent);
+  --quiet: var(--muted);
+
+  /* 字体：vendor 只装 Space Grotesk 700 + JetBrains Mono，其余系统回退 */
+  --font-display: "Space Grotesk", -apple-system, "Noto Sans SC", "PingFang SC", sans-serif;
+  --font-body: -apple-system, "Inter", "Noto Sans SC", "PingFang SC", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}

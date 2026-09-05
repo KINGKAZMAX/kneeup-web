@@ -1,0 +1,61 @@
+/* KneeUp 基础样式（配合 tokens.css） */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-0);
+  background-image: radial-gradient(1200px 600px at 70% -10%, var(--blue-glow), transparent);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img, video, canvas { max-width: 100%; display: block; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { font-family: inherit; }
+
+.container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+section { padding: 72px 0; }
+section.alt { background: var(--bg-1); }
+
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -.02em; line-height: 1.15; }
+h1 { font-size: clamp(2.2rem, 6vw, 4.2rem); }
+h2 { font-size: clamp(1.6rem, 4vw, 2.6rem); }
+.eyebrow { font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); font-family: var(--font-mono); }
+.lead { color: var(--ink-dim); max-width: 62ch; }
+.muted { color: var(--muted); }
+
+/* 按钮 */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 48px;
+  padding: 12px 26px; border-radius: 999px; border: 1px solid transparent;
+  background: var(--primary); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer;
+}
+.btn:hover { background: var(--primary-hi); text-decoration: none; }
+.btn.ghost { background: transparent; color: var(--ink-dim); border-color: var(--line); }
+.btn.ghost:hover { color: var(--ink); border-color: var(--accent); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 卡片 */
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+
+/* 诚信角标（SIMULATED / LIVE）——全站唯一实现，禁止各页自造 */
+.ku-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: .68rem; letter-spacing: .08em;
+  padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted);
+}
+.ku-chip.sim { color: var(--warn); border-color: rgba(240, 179, 78, .4); }
+.ku-chip.sim::before { content: "○"; }
+.ku-chip.live { color: var(--accent); border-color: rgba(67, 118, 235, .5); }
+.ku-chip.live::before { content: "●"; }
+
+/* 数字大卡 */
+.stat-num { font-family: var(--font-mono); font-size: clamp(3rem, 9vw, 5.5rem); color: var(--accent); line-height: 1; }
+
+/* 移动端触控与安全区 */
+@media (max-width: 767px) {
+  section { padding: 52px 0; }
+  .btn { width: 100%; justify-content: center; }
+}
