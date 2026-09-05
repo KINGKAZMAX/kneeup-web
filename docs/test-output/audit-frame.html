@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>audit-frame · 视口巡检框架</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #333; }
+  iframe { border: 0; display: block; background: #0B0C0E; }
+</style>
+</head>
+<body>
+<iframe id="f" title="audit target"></iframe>
+<script>
+  // ?page=../../index.html&w=390&h=844 —— iframe 宽度即被测页布局视口宽(媒体查询真实生效)
+  var q = new URLSearchParams(location.search);
+  var page = q.get('page') || '../../index.html';
+  var w = parseInt(q.get('w') || '390', 10);
+  var h = parseInt(q.get('h') || '844', 10);
+  var f = document.getElementById('f');
+  f.style.width = w + 'px';
+  f.style.height = h + 'px';
+  f.src = page;
+  // 供巡检脚本调用:把 iframe 撑到内容全高,返回实际高度
+  window.__fitFull = function () {
+    try {
+      var d = f.contentDocument.documentElement;
+      var full = Math.max(d.scrollHeight, d.body ? d.body.scrollHeight : 0);
+      f.style.height = full + 'px';
+      return full;
+    } catch (e) { return -1; }
+  };
+</script>
+</body>
+</html>

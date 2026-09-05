@@ -155,7 +155,7 @@ function boot(renderer) {
     });
     // 自动扶正：包围盒长轴 → Y 向上（预览页已验证）
     let b = new THREE.Box3().setFromObject(model);
-    const e = b.getSize(new THREE.Vector3());
+    let e = b.getSize(new THREE.Vector3());
     if (e.x > e.y && e.x >= e.z) model.rotation.z = Math.PI / 2;
     else if (e.z > e.y) model.rotation.x = -Math.PI / 2;
     // 居中 + 缩放至高 2.0 + 脚底落地

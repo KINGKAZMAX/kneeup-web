@@ -1,0 +1,137 @@
+[
+ {
+  "name": "audit-index-desktop-before",
+  "fullH": 7039,
+  "chunks": 8,
+  "dpr": 1.3333333730697632,
+  "audit": {
+   "innerW": 1280,
+   "scrollW": 1280,
+   "overflowX": 0,
+   "fullH": 7039,
+   "wide": [],
+   "smallCount": 22,
+   "small": [
+    "A \"KneeUp 膝望\" 102x28",
+    "A \"产品\" 54x36",
+    "A \"演示\" 54x36",
+    "A \"技术\" 54x36",
+    "A \"商业\" 54x36",
+    "A \"合规\" 54x36",
+    "A \"团队\" 54x36",
+    "A \"Try Demo\" 104x41",
+    "BUTTON \"0\" 34x34",
+    "BUTTON \"1\" 34x34",
+    "BUTTON \"2\" 34x34",
+    "BUTTON \"3\" 34x34",
+    "BUTTON \"4\" 34x34",
+    "BUTTON \"5\" 34x34"
+   ],
+   "appChildren": null
+  }
+ },
+ {
+  "name": "audit-index-mobile-before",
+  "fullH": 10570,
+  "chunks": 13,
+  "dpr": 1.3333333730697632,
+  "audit": {
+   "innerW": 390,
+   "scrollW": 494,
+   "overflowX": 104,
+   "fullH": 10570,
+   "wide": [
+    "DIV.demo-main w=451",
+    "DIV.stage w=451",
+    "VIDEO.#ku-video w=450",
+    "CANVAS.#ku-overlay w=450",
+    "DIV.stage-hint w=450",
+    "DIV.demo-actions w=451",
+    "BUTTON.btn#ku-start-live w=451",
+    "BUTTON.btn#ku-start-sim w=451",
+    "P.privacy-note w=451",
+    "SPAN.muted w=451"
+   ],
+   "smallCount": 22,
+   "small": [
+    "A \"KneeUp 膝望\" 102x28",
+    "A \"产品\" 54x36",
+    "A \"演示\" 54x36",
+    "A \"技术\" 54x36",
+    "A \"商业\" 54x36",
+    "A \"合规\" 54x36",
+    "A \"团队\" 54x36",
+    "A \"Try Demo\" 104x41",
+    "BUTTON \"0\" 34x34",
+    "BUTTON \"1\" 34x34",
+    "BUTTON \"2\" 34x34",
+    "BUTTON \"3\" 34x34",
+    "BUTTON \"4\" 34x34",
+    "BUTTON \"5\" 34x34"
+   ],
+   "appChildren": null
+  }
+ },
+ {
+  "name": "audit-apps-patient-desktop-before",
+  "fullH": 1986,
+  "chunks": 3,
+  "dpr": 1.3333333730697632,
+  "audit": {
+   "innerW": 1280,
+   "scrollW": 1280,
+   "overflowX": 0,
+   "fullH": 1986,
+   "wide": [],
+   "smallCount": 34,
+   "small": [
+    "A \"← 官网 Back\" 78x21",
+    "A \"用户端\" 77x41",
+    "A \"教练端\" 77x41",
+    "A \"AI数据屏\" 92x41",
+    "A \"训练游戏\" 91x41",
+    "A \"身体记录\" 91x41",
+    "BUTTON \"\" 14x14",
+    "BUTTON \"\" 14x14",
+    "BUTTON \"\" 14x14",
+    "BUTTON \"\" 14x14",
+    "BUTTON \"\" 14x14",
+    "BUTTON \"\" 14x14",
+    "BUTTON \"\" 14x14",
+    "BUTTON \"\" 14x14"
+   ],
+   "appChildren": 2
+  }
+ },
+ {
+  "name": "audit-apps-patient-mobile-before",
+  "fullH": 2970,
+  "chunks": 4,
+  "dpr": 1.3333333730697632,
+  "audit": {
+   "innerW": 390,
+   "scrollW": 390,
+   "overflowX": 0,
+   "fullH": 2970,
+   "wide": [],
+   "smallCount": 34,
+   "small": [
+    "A \"← 官网 Back\" 78x21",
+    "A \"用户端\" 77x41",
+    "A \"教练端\" 77x41",
+    "A \"AI数据屏\" 92x41",
+    "A \"训练游戏\" 91x41",
+    "A \"身体记录\" 91x41",
+    "BUTTON \"\" 10x10",
+    "BUTTON \"\" 10x10",
+    "BUTTON \"\" 10x10",
+    "BUTTON \"\" 10x10",
+    "BUTTON \"\" 10x10",
+    "BUTTON \"\" 10x10",
+    "BUTTON \"\" 10x10",
+    "BUTTON \"\" 10x10"
+   ],
+   "appChildren": 2
+  }
+ }
+]
