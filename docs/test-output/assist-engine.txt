@@ -52,5 +52,23 @@ PASS  疲劳随时间累积
 PASS  未知场景名忽略
 PASS  端到端：上坡基准 35 建立
 PASS  端到端：输出被速率限制平滑  Δ=0.00
+PASS  无存储通道时 boost=0(不炸)
+PASS  boost 衰减:0/半衰/过期  20/10/0
+PASS  BLE 标准行解析
+PASS  BLE 别名 angleL/angleR 兼容
+PASS  BLE 角度钳位 0-190
+PASS  BLE 噪声行容忍
+PASS  BLE ts 缺省用接收时刻
+PASS  BLE activity 字符串透传
+PASS  NUS UUID 快照
+PASS  场景词:上坡
+PASS  场景词:楼梯→stairs
+PASS  场景词:下楼
+PASS  场景词:起身
+PASS  报告助力
+PASS  报告助力(英文 assist)
+PASS  开始训练
+PASS  停止
+PASS  未命中 → null
 ────────────────────────────────────────────────
-RESULT  54 passed, 0 failed
+RESULT  72 passed, 0 failed
