@@ -48,10 +48,10 @@
 .hero-cta { display: flex; flex-wrap: wrap; gap: 14px; margin: 26px 0 18px; }
 .hero-badges { display: flex; flex-wrap: wrap; gap: 10px; }
 .hero-media { position: relative; }
-/* C11 §四：去紫调蓝定稿滤镜（knee-product.jpg 未烘焙兜底） */
+/* C11 §四：去紫调蓝定稿滤镜（真人场景图轻度调色，皮肤不偏色） */
 .hero-media img {
   width: 100%; border-radius: var(--radius); border: 1px solid var(--line);
-  filter: grayscale(.25) hue-rotate(-42deg) saturate(.72) contrast(1.06) brightness(.8);
+  filter: saturate(.88) hue-rotate(-16deg) contrast(1.04) brightness(.92);
   background: var(--panel);
 }
 .nomed-badge {
@@ -90,8 +90,14 @@ section h2 { margin: 10px 0 18px; }
 .product-card:hover { text-decoration: none; border-color: var(--accent); }
 .product-card img {
   width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line);
-  filter: grayscale(.2) hue-rotate(-30deg) saturate(.8) contrast(1.05) brightness(.85);
+  filter: saturate(.92) hue-rotate(-12deg) contrast(1.03) brightness(.9);
 }
+.feature-img {
+  width: 100%; height: 118px; object-fit: cover; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--bg-1); margin-bottom: 4px;
+  filter: saturate(.9) hue-rotate(-24deg) contrast(1.05) brightness(.88);
+}
+.feature-img.contain { object-fit: contain; background: var(--panel-2); }
 .badge-3d {
   position: absolute; top: 24px; left: 24px; z-index: 2;
   font-family: var(--font-mono); font-size: .66rem; letter-spacing: .1em;
