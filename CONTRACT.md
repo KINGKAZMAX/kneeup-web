@@ -10,6 +10,14 @@
 - **术语豁免**：用户明确要求新增「Assist Level 助力等级」功能，assist 面板内（含其导航入口 chip）允许使用「助力等级 / Assist Level」；其余禁词 v3 纪律不变。
 - 版本注记由「2026-09-05 冻结」升至 v2。
 
+### v2 增补（同日第二轮）
+- 素材：`assets/img/*.webp`（hero-wear/product-water/feat-support/feat-airflow/feat-smart，真图入库）；`index.html`/`css/landing.css` 换真图。
+- 3D：`js/three/scene.js`（inner 程序化解剖 + heat 七区部位热力，锚点由结构四锚点替换）、`3d.html`、`css/three.css`。
+- 联动：`js/ai/assist-runtime.js`（新键 `assist.v1`，见 schema 节）、`js/game/game.js`、`css/game.css`、`js/views/assist.js`。
+- BLE：`js/ai/ble-source.js`；`js/demo-bind.js` + `index.html` 新增 `button#ku-start-ble`（DOM id 契约增补此 id）。
+- 语音/M5：`js/ai/voice-commands.js`、`firmware/m5_voice_bridge.ino`、`docs/M5-PROTOCOL.md`。
+- 部署：GitHub Pages `kingkazmax.github.io/kneeup-web/`（main 根目录）。
+
 ## 模块所有权（谁写哪个文件，禁止越界）
 - W1：`index.html`、`css/landing.css`
 - W2：`js/ai/mp-loader.js`、`js/ai/pose-engine.js`、`js/ai/sim-source.js`、`js/game/game.js`、`js/demo-bind.js`
