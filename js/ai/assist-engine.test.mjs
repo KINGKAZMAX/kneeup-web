@@ -170,6 +170,20 @@ assert('规则表快照', JSON.stringify(BASE_ASSIST) === JSON.stringify({ flat:
   assert('NUS UUID 快照', NUS.service === '6e400001-b5a3-f393-e0a9-e50e24dcca9e' && NUS.txChar === '6e400003-b5a3-f393-e0a9-e50e24dcca9e' && NUS.rxChar === '6e400002-b5a3-f393-e0a9-e50e24dcca9e');
 }
 
+// ── 12. voice-commands 指令解析 ────────────────────────────────
+{
+  const { parseVoiceCommand } = await import('./voice-commands.js');
+  assert('场景词:上坡', parseVoiceCommand('切换到上坡').action === 'set-scene' && parseVoiceCommand('切换到上坡').scene === 'uphill');
+  assert('场景词:楼梯→stairs', parseVoiceCommand('帮我换成楼梯模式').scene === 'stairs');
+  assert('场景词:下楼', parseVoiceCommand('下楼').scene === 'downhill');
+  assert('场景词:起身', parseVoiceCommand('起身').scene === 'standup');
+  assert('报告助力', parseVoiceCommand('报告当前助力').action === 'report-assist');
+  assert('报告助力(英文 assist)', parseVoiceCommand('现在 assist 多少').action === 'report-assist');
+  assert('开始训练', parseVoiceCommand('开始训练').action === 'start-training');
+  assert('停止', parseVoiceCommand('停止').action === 'stop-training');
+  assert('未命中 → null', parseVoiceCommand('今天天气怎么样') === null && parseVoiceCommand('') === null);
+}
+
 console.log('─'.repeat(48));
 console.log(`RESULT  ${pass} passed, ${fail} failed`);
 process.exitCode = fail ? 1 : 0;

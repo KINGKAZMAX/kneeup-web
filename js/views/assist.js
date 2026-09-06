@@ -5,6 +5,7 @@ import { AssistEngine, ACTIVITY_LABELS, HARD_CAP, MAX_RATE_PER_SEC, SI_THRESHOLD
 import { createAssistSim, ASSIST_SCENARIOS } from '../ai/assist-sim.js';
 import { getFatigueBoost, writeAssistSnapshot } from '../ai/assist-runtime.js';
 import { createBleSource, bleSupported } from '../ai/ble-source.js';
+import { parseVoiceCommand, VOICE_HINT_TEXT } from '../ai/voice-commands.js';
 
 const WINDOW_S = 30;          // 曲线窗口 30s
 const PUSH_HZ = 10;           // 曲线采样
@@ -184,6 +185,27 @@ export function render(root) {
     <ul class="as-feed" id="as-feed"><li class="muted">当前无修正——基准输出</li></ul>
   </div>
 
+  <div class="panel">
+    <h3>语音助手 × M5 桥接</h3>
+    <p class="panel-sub">语音识别与合成均为浏览器本地 Web Speech API,不经云端 · M5 桥接走 Web Serial 115200 · <b>协议与固件未实机联调(UNTESTED)</b></p>
+    <div class="as-vm">
+      <div class="as-vm-row">
+        <button class="btn ghost" id="as-voice-btn" type="button">🎙 开始聆听</button>
+        <span class="ku-chip">LOCAL · 本地识别</span>
+        <span class="as-vm-status muted" id="as-voice-status"></span>
+      </div>
+      <p class="as-vm-log" id="as-voice-log">可以说:开始训练 / 停止 / 切换上坡 / 报告当前助力</p>
+    </div>
+    <div class="as-vm as-vm-m5">
+      <div class="as-vm-row">
+        <button class="btn ghost" id="as-m5-btn" type="button">连接 M5(串口)</button>
+        <span class="ku-chip sim">UNTESTED · 未实机联调</span>
+        <span class="as-vm-status muted" id="as-m5-status"></span>
+      </div>
+      <p class="as-vm-log muted">下行 ASSIST:%;SCENE:场景;FATIGUE:指数(1Hz 节流)· 上行 BTN:A=报告当前助力 / BTN:B=下一场景 · 协议见 docs/M5-PROTOCOL.md</p>
+    </div>
+  </div>
+
   <p class="screen-foot">说明:本面板为规则引擎演示(数据 SIMULATED 模拟),输出为助力等级参考值,不构成建议性设定;硬上限 ${HARD_CAP}% 与速率限制 ≤${MAX_RATE_PER_SEC}pp/s 为安全约束。</p>`;
 
   const sim = createAssistSim({ seed: 11 });
@@ -235,7 +257,7 @@ export function render(root) {
     si: root.querySelector('#as-b-si'), fat: root.querySelector('#as-b-fat'),
   };
 
-  const state = { buf: [], clock: 0, lastPush: 0, lastDom: 0, lastSnap: 0, lastSig: '', raf: 0, dead: false };
+  const state = { buf: [], clock: 0, lastPush: 0, lastDom: 0, lastSnap: 0, lastSig: '', raf: 0, dead: false, lastLevel: 10, lastActivity: 'flat' };
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function pushFeed(d, wallTs) {
@@ -291,10 +313,17 @@ export function render(root) {
       const mods = d.modifiers.reduce((s, m) => s + m.delta, 0);
       readout.textContent = `基准 ${d.base}% ＋ 修正 +${mods}% ＝ 目标 ${d.target}%${d.capped ? ` · 已截断至 ${HARD_CAP}%` : ''}${d.rateLimited ? ` · 限速输出 ${d.level.toFixed(1)}%` : ''}`;
       pushFeed(d, Date.now());
+      state.lastLevel = d.level; state.lastActivity = f.activity;
     }
     if (now - state.lastSnap > 500) {
       state.lastSnap = now;
       writeAssistSnapshot({ level: d.level, activity: d.activity });   // 跨页共享快照
+    }
+    // M5 下行状态行(1Hz 节流,值变化才发):ASSIST:%;SCENE:场景;FATIGUE:指数
+    if (m5Open && now - m5LastSendAt > 1000) {
+      const line = `ASSIST:${Math.round(d.level)};SCENE:${d.activity};FATIGUE:${Math.round(fatigueTotal)}`;
+      if (line !== m5LastSent) { m5LastSent = line; m5SendLine(line); }
+      m5LastSendAt = now;
     }
     state.raf = requestAnimationFrame(tick);
   }
@@ -306,5 +335,109 @@ export function render(root) {
     sim.setScenario(btn.dataset.scn);
   });
 
-  return () => { state.dead = true; cancelAnimationFrame(state.raf); try { ble.running && ble.stop(); } catch {} };
+  /* ---- 语音助手（Web Speech 本地识别/合成，不经云端） ---- */
+  const vBtn = root.querySelector('#as-voice-btn'), vStatus = root.querySelector('#as-voice-status'), vLog = root.querySelector('#as-voice-log');
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recog = null, listening = false;
+  const speak = text => {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text); u.lang = 'zh-CN';
+    speechSynthesis.speak(u);
+  };
+  const applyScene = scene => {
+    sim.setScenario(scene);
+    root.querySelectorAll('#as-scn .fchip[data-scn]').forEach(b => b.classList.toggle('is-on', b.dataset.scn === scene));
+  };
+  const reportAssist = () => `当前助力等级 ${Math.round(state.lastLevel)}%,场景${ACTIVITY_LABELS[state.lastActivity] || state.lastActivity}`;
+  if (!SR) {
+    vBtn.disabled = true;
+    vStatus.textContent = '当前浏览器不支持本地语音识别 · 请用桌面 Chrome';
+  } else {
+    vBtn.addEventListener('click', () => {
+      if (listening) { try { recog && recog.stop(); } catch {} return; }
+      recog = new SR();
+      recog.lang = 'zh-CN'; recog.interimResults = false; recog.maxAlternatives = 1;
+      recog.onstart = () => { listening = true; vBtn.textContent = '■ 停止聆听'; vStatus.textContent = '聆听中…'; };
+      recog.onend = () => { listening = false; vBtn.textContent = '🎙 开始聆听'; vStatus.textContent = ''; };
+      recog.onerror = ev => { vStatus.textContent = `识别不可用(${ev.error})`; };
+      recog.onresult = ev => {
+        const text = ev.results[0][0].transcript;
+        const cmd = parseVoiceCommand(text);
+        let reply;
+        if (!cmd) reply = '没听清。' + VOICE_HINT_TEXT;
+        else if (cmd.action === 'set-scene') { applyScene(cmd.scene); reply = `已切换到${ACTIVITY_LABELS[cmd.scene]}`; }
+        else if (cmd.action === 'report-assist') reply = reportAssist();
+        else if (cmd.action === 'start-training') { reply = '好的，打开训练游戏'; location.hash = '#/game'; }
+        else reply = '好的，已停止';
+        vLog.textContent = `「${text}」→ ${reply}`;
+        speak(reply);
+      };
+      try { recog.start(); } catch {}
+    });
+  }
+
+  /* ---- M5 串口桥接（Web Serial 115200；协议/固件未实机联调，如实标注） ---- */
+  const m5Btn = root.querySelector('#as-m5-btn'), m5Status = root.querySelector('#as-m5-status');
+  let m5Port = null, m5Reader = null, m5Open = false, m5LastSent = '', m5LastSendAt = 0;
+  let sceneIdx = 0;
+  async function m5Disconnect() {
+    m5Open = false;
+    try { m5Reader && await m5Reader.cancel(); } catch {}
+    try { m5Port && await m5Port.close(); } catch {}
+    m5Reader = null; m5Port = null;
+    m5Btn.classList.remove('is-on'); m5Btn.textContent = '连接 M5(串口)';
+    m5Status.textContent = '已断开';
+  }
+  async function m5SendLine(line) {
+    if (!m5Open || !m5Port) return;
+    try {
+      const w = m5Port.writable.getWriter();
+      await w.write(new TextEncoder().encode(line + '\n'));
+      w.releaseLock();
+    } catch {}
+  }
+  if (!('serial' in navigator)) {
+    m5Btn.hidden = true;
+    m5Status.textContent = '当前浏览器无 Web Serial · M5 桥接不可用';
+  } else {
+    m5Btn.addEventListener('click', async () => {
+      if (m5Open) { await m5Disconnect(); return; }
+      try {
+        m5Port = await navigator.serial.requestPort();
+        await m5Port.open({ baudRate: 115200 });
+        m5Open = true;
+        m5Btn.classList.add('is-on'); m5Btn.textContent = '断开 M5';
+        m5Status.textContent = '已连接 · 115200 8N1(UNTESTED 未实机联调)';
+        const dec = new TextDecoder();
+        m5Reader = m5Port.readable.getReader();
+        let buf = '';
+        while (m5Open) {
+          const { value, done } = await m5Reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          const lines = buf.split('\n'); buf = lines.pop() || '';
+          for (const raw of lines) {
+            const line = raw.trim();
+            if (line === 'BTN:A') { const r = reportAssist(); vLog.textContent = `[M5 BTN:A] → ${r}`; speak(r); }
+            else if (line === 'BTN:B') { sceneIdx = (sceneIdx + 1) % SCN_ORDER.length; applyScene(SCN_ORDER[sceneIdx]); vLog.textContent = `[M5 BTN:B] → 切换${ACTIVITY_LABELS[SCN_ORDER[sceneIdx]]}`; }
+            else if (line) vLog.textContent = `[M5] ${line}`;
+          }
+        }
+        if (m5Open) m5Disconnect();
+      } catch (e) {
+        m5Status.textContent = e && e.name === 'NotFoundError' ? '已取消端口选择' : '连接失败 · 保持未连接';
+        m5Open = false; m5Port = null;
+      }
+    });
+  }
+
+  return () => {
+    state.dead = true;
+    cancelAnimationFrame(state.raf);
+    try { ble.running && ble.stop(); } catch {}
+    try { recog && recog.stop(); } catch {}
+    try { 'speechSynthesis' in window && speechSynthesis.cancel(); } catch {}
+    try { m5Open && m5Disconnect(); } catch {}
+  };
 }

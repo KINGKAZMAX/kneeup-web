@@ -239,6 +239,14 @@ input[type=text]:focus-visible { outline: 2px solid var(--accent); outline-offse
 .as-ble.is-on { color: var(--accent); border-color: rgba(67, 118, 235, .5); background: var(--accent-mist); border-style: solid; }
 .as-ble:disabled { opacity: .5; cursor: not-allowed; }
 .as-ble-note { font-size: .74rem; font-family: var(--font-mono); }
+
+/* 语音助手 × M5 */
+.as-vm-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.as-vm-row .btn { min-height: 44px; }
+@media (max-width: 767px) { .as-vm-row .btn { width: auto; } }
+.as-vm-status { font-size: .74rem; font-family: var(--font-mono); }
+.as-vm-log { font-family: var(--font-mono); font-size: .78rem; margin-top: 10px; min-height: 1.4em; color: var(--ink-dim); }
+.as-vm-m5 { border-top: 1px dashed var(--line); padding-top: 14px; margin-top: 14px; }
 .as-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 18px; align-items: stretch; margin-bottom: 18px; }
 @media (max-width: 920px) { .as-grid { grid-template-columns: 1fr; } }
 .as-gauge-panel { position: relative; display: flex; flex-direction: column; }
