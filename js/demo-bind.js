@@ -7,6 +7,7 @@
 
 import { loadPoseLandmarker } from './ai/mp-loader.js';
 import { createSimSource } from './ai/sim-source.js';
+import { createBleSource, bleSupported } from './ai/ble-source.js';
 import { LM, LOWER_LIMB_EDGES, kneeAngle, MedianBuffer, symmetry } from './ai/pose-engine.js';
 import { mountGame } from './game/game.js';
 
@@ -60,6 +61,11 @@ function setChip(live) {
 function setHint(state) {
   if (!hintEl) return;
   if (state === 'live') hintEl.style.display = 'none';
+  else if (state === 'ble') {
+    hintEl.style.display = '';
+    hintEl.querySelector('p').innerHTML =
+      'LIVE · BLE 护具直连<br><span class="muted">膝角来自实机传感（本通道无摄像头画面）</span>';
+  }
   else {
     hintEl.style.display = '';
     hintEl.querySelector('p').innerHTML =
@@ -159,7 +165,7 @@ function simTick(now) {
 }
 
 /* ── 切换与兜底 ── */
-function stopLoops() { cancelAnimationFrame(liveRaf); cancelAnimationFrame(simRaf); liveRaf = simRaf = 0; }
+function stopLoops() { cancelAnimationFrame(liveRaf); cancelAnimationFrame(simRaf); cancelAnimationFrame(bleRaf); liveRaf = simRaf = bleRaf = 0; }
 function stopCamera() {
   stream?.getTracks().forEach(t => t.stop());
   stream = null; video.srcObject = null;
@@ -235,7 +241,65 @@ mountGame($id('ku-game'), {
   },
 });
 
+/* ── BLE 管线（Web Bluetooth NUS,实机 LIVE;断开自动回退 sim) ── */
+let bleRaf = 0;
+const bleSource = createBleSource({
+  onState(s) {
+    if (s === 'closed' && mode === 'ble') startSim('BLE 连接已断开，自动回退模拟演示');
+  },
+});
+function bleTick() {
+  bleRaf = requestAnimationFrame(bleTick);
+  const f = bleSource.getFrame();
+  if (f) publish(f);
+}
+function describeBleErr(err) {
+  const name = err?.name || '';
+  if (name === 'NotSupported') return '当前浏览器不支持 Web Bluetooth（请用桌面或 Android Chrome）';
+  if (name === 'SecurityError') return 'BLE 需由用户手势触发';
+  if (name === 'NotFoundError') return '未发现护具设备（确认护具已开机广播）';
+  return `BLE 连接失败（${name || '未知错误'}）`;
+}
+async function startBle() {
+  if (mode === 'ble' || starting) return;
+  starting = true;
+  const wasSim = mode === 'sim';
+  stopLoops();
+  try {
+    await bleSource.start();               // requestDevice 必须在本点击手势内
+    stopCamera(); clearOverlay();
+    mode = 'ble'; setChip(true); chip.textContent = 'LIVE · BLE 实时';
+    setHint('ble');
+    bleRaf = requestAnimationFrame(bleTick);
+    cue('ble', `LIVE · BLE 已连接${bleSource.deviceName ? ' ' + bleSource.deviceName : ''}`, { force: true });
+  } catch (err) {
+    const cancelled = err?.name === 'NotFoundError' && /cancel/i.test(err?.message || '');
+    if (cancelled) {
+      // 用户取消设备选择：不打断当前通道
+      if (wasSim) simRaf = requestAnimationFrame(simTick);
+      cue('ble-cancel', '已取消 BLE 设备选择', { force: true });
+    } else if (wasSim) {
+      simRaf = requestAnimationFrame(simTick);
+      cue('ble-fail', `${describeBleErr(err)} · 已继续 SIMULATED 演示`, { force: true });
+    } else {
+      startSim(describeBleErr(err));
+    }
+  } finally { starting = false; }
+}
+
 /* ── 入口 ── */
 $id('ku-start-live').addEventListener('click', () => { startLive(); });
 $id('ku-start-sim').addEventListener('click', () => { startSim('手动选择模拟演示'); });
+{
+  const bleBtn = $id('ku-start-ble');
+  if (bleBtn) {
+    if (!bleSupported()) {
+      bleBtn.disabled = true;
+      bleBtn.title = '当前浏览器不支持 Web Bluetooth · 请用桌面或 Android Chrome';
+      bleBtn.textContent = 'BLE 不可用 · 需桌面/Android Chrome';
+    } else {
+      bleBtn.addEventListener('click', () => { startBle(); });
+    }
+  }
+}
 setText('ku-reps', '0');

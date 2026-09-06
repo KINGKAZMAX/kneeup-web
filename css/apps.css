@@ -232,9 +232,13 @@ input[type=text]:focus-visible { outline: 2px solid var(--accent); outline-offse
 .game-ph .quick-links { justify-content: center; }
 
 /* ---------- Assist Level 助力等级面板 ---------- */
-.as-scn { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.as-scn { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
 .as-scn .fchip { cursor: pointer; }
 .as-scn-en { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .1em; opacity: .7; margin-left: 6px; }
+.as-ble { border-style: dashed; }
+.as-ble.is-on { color: var(--accent); border-color: rgba(67, 118, 235, .5); background: var(--accent-mist); border-style: solid; }
+.as-ble:disabled { opacity: .5; cursor: not-allowed; }
+.as-ble-note { font-size: .74rem; font-family: var(--font-mono); }
 .as-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 18px; align-items: stretch; margin-bottom: 18px; }
 @media (max-width: 920px) { .as-grid { grid-template-columns: 1fr; } }
 .as-gauge-panel { position: relative; display: flex; flex-direction: column; }

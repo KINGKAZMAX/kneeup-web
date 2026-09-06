@@ -157,6 +157,19 @@ assert('规则表快照', JSON.stringify(BASE_ASSIST) === JSON.stringify({ flat:
   delete globalThis.localStorage;
 }
 
+// ── 11. ble-source 行解析（Nordic UART JSON 行 → 同形帧） ─────
+{
+  const { parseBleLine, NUS } = await import('./ble-source.js');
+  const f = parseBleLine('{"kneeAngleL":96.5,"kneeAngleR":98.1,"pressure":0.42,"ts":12345}');
+  assert('BLE 标准行解析', f && f.angleL === 96.5 && f.angleR === 98.1 && f.pressure === 0.42 && f.ts === 12345 && f.source === 'live' && f.visibility === 1);
+  assert('BLE 别名 angleL/angleR 兼容', (() => { const g = parseBleLine('{"angleL":100}'); return g && g.angleL === 100 && g.angleR === null; })());
+  assert('BLE 角度钳位 0-190', parseBleLine('{"kneeAngleL":250}').angleL === 190);
+  assert('BLE 噪声行容忍', parseBleLine('garbage') === null && parseBleLine('{broken') === null && parseBleLine('{"pressure":0.5}') === null);
+  assert('BLE ts 缺省用接收时刻', (() => { const g = parseBleLine('{"kneeAngleL":90}', 555); return g.ts === 555; })());
+  assert('BLE activity 字符串透传', parseBleLine('{"kneeAngleL":90,"activity":"stairs"}').activity === 'stairs');
+  assert('NUS UUID 快照', NUS.service === '6e400001-b5a3-f393-e0a9-e50e24dcca9e' && NUS.txChar === '6e400003-b5a3-f393-e0a9-e50e24dcca9e' && NUS.rxChar === '6e400002-b5a3-f393-e0a9-e50e24dcca9e');
+}
+
 console.log('─'.repeat(48));
 console.log(`RESULT  ${pass} passed, ${fail} failed`);
 process.exitCode = fail ? 1 : 0;

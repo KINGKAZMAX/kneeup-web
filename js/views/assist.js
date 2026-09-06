@@ -4,6 +4,7 @@ import { tok } from '../viz/charts.js';
 import { AssistEngine, ACTIVITY_LABELS, HARD_CAP, MAX_RATE_PER_SEC, SI_THRESHOLD, FATIGUE_THRESHOLD } from '../ai/assist-engine.js';
 import { createAssistSim, ASSIST_SCENARIOS } from '../ai/assist-sim.js';
 import { getFatigueBoost, writeAssistSnapshot } from '../ai/assist-runtime.js';
+import { createBleSource, bleSupported } from '../ai/ble-source.js';
 
 const WINDOW_S = 30;          // 曲线窗口 30s
 const PUSH_HZ = 10;           // 曲线采样
@@ -138,6 +139,10 @@ export function render(root) {
   <div class="as-scn" id="as-scn" role="group" aria-label="场景切换(模拟)">
     ${SCN_ORDER.map(k => `<button type="button" class="fchip${k === 'flat' ? ' is-on' : ''}" data-scn="${k}">${ACTIVITY_LABELS[k]}<span class="as-scn-en">${k.toUpperCase()}</span></button>`).join('')}
   </div>
+  <div class="as-scn">
+    <button type="button" class="fchip as-ble" id="as-ble">连接护具 BLE · LIVE</button>
+    <span class="as-ble-note muted" id="as-ble-note"></span>
+  </div>
 
   <div class="as-grid">
     <div class="panel as-gauge-panel">
@@ -185,6 +190,38 @@ export function render(root) {
   const eng = new AssistEngine();
   sim.setScenario('flat');
 
+  // BLE 实机通道（LIVE）:连接后膝角/SI 取自实机，速度与疲劳仍由模拟通道补全（如实标注）
+  const chipEl = root.querySelector('.as-chip');
+  const bleBtn = root.querySelector('#as-ble');
+  const bleNote = root.querySelector('#as-ble-note');
+  const ble = createBleSource({
+    onState(s, detail) {
+      if (s === 'live') {
+        chipEl.className = 'ku-chip live as-chip'; chipEl.textContent = 'LIVE · BLE 实测';
+        bleBtn.classList.add('is-on'); bleBtn.textContent = '断开 BLE';
+        bleNote.textContent = `已连接${detail ? ' ' + detail : ''} · 膝角/左右差为实机值,速度/疲劳仍为模拟`;
+      } else if (s === 'closed') {
+        chipEl.className = 'ku-chip sim as-chip'; chipEl.textContent = 'SIMULATED · 模拟';
+        bleBtn.classList.remove('is-on'); bleBtn.textContent = '连接护具 BLE · LIVE';
+        bleNote.textContent = '已断开,回退模拟通道';
+      } else if (s === 'connecting') { bleNote.textContent = '连接中…'; }
+    },
+  });
+  if (!bleSupported()) {
+    bleBtn.disabled = true;
+    bleNote.textContent = '当前浏览器不支持 Web Bluetooth · 请用桌面或 Android Chrome';
+  } else {
+    bleBtn.addEventListener('click', async () => {
+      if (ble.running) { await ble.stop(); return; }
+      try { await ble.start(); }
+      catch (e) {
+        bleNote.textContent = e && e.name === 'NotFoundError' && /cancel/i.test(e.message || '')
+          ? '已取消设备选择'
+          : `连接失败(${e && e.name || '未知'}) · 保持模拟通道`;
+      }
+    });
+  }
+
   const cvG = root.querySelector('#as-gauge');
   const cvT = root.querySelector('#as-trend');
   const readout = root.querySelector('#as-readout');
@@ -219,6 +256,13 @@ export function render(root) {
   function tick(now) {
     if (state.dead) return;
     const f = sim.frame(now);
+    const bf = ble.running ? ble.getFrame() : null;
+    if (bf) {
+      // BLE LIVE:膝角取实机较小值;SI=|L−R|/(0.5(L+R))×100%(蓝本 §4.1③)
+      const L = bf.angleL, R = bf.angleR;
+      if (L != null) f.kneeAngle = L;
+      if (L != null && R != null) f.si = clamp(Math.abs(L - R) / Math.max(1, (L + R) / 2) * 100, 0, 100);
+    }
     const boost = getFatigueBoost();           // 游戏结算写回的疲劳贡献(10min 衰减)
     const fatigueTotal = clamp(f.fatigue + boost, 0, 100);
     const d = eng.update({ ...f, fatigue: fatigueTotal }, now);
@@ -262,5 +306,5 @@ export function render(root) {
     sim.setScenario(btn.dataset.scn);
   });
 
-  return () => { state.dead = true; cancelAnimationFrame(state.raf); };
+  return () => { state.dead = true; cancelAnimationFrame(state.raf); try { ble.running && ble.stop(); } catch {} };
 }
