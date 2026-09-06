@@ -22,6 +22,7 @@
   `id, tsStart, tsEnd, exercise("squat"|"seated-ext"), inputMode("live"|"simulated"), source("live"|"simulated"), counts:{target,completed}, metrics:{kneePeakL,kneePeakR,symmetryAvg,qualityAvg}, subjective:{pain:0-10,selfReported:true,feeling}, safety:{flag:"none"|"caution"|"stop",events:[]}`
 - `body.regions.v1`：七区 kebab 键 `knee-anterior,knee-medial,knee-lateral,knee-posterior,hip,ankle,contra`，值 `{pain:0-10,load:0-10,note}`（主观记录，UI 显示须带 SUBJECTIVE/SIMULATED 双 chip）
 - `plan.v1`：`{sets,reps,supportPct}`（教练端设定，患者端/游戏读取）
+- `assist.v1`（v2 新增）：`{level, activity, fatigueBoost, boostTs, updatedAt}`——助力等级跨页共享；`fatigueBoost` 为游戏结算写回的疲劳贡献（0–40，10 分钟线性衰减），assist 面板疲劳指数叠加显示并标注。
 - 兼容：旧键 `airflowCompleted` 迁移为一条种子 Session。
 
 ## DOM id 契约（W1 写标记，W2 绑定，双方不得改名）

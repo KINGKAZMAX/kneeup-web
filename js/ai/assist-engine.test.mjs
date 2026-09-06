@@ -140,6 +140,23 @@ assert('规则表快照', JSON.stringify(BASE_ASSIST) === JSON.stringify({ flat:
   assert('端到端：输出被速率限制平滑', Math.abs(e1.level - e0.level) <= 3 + 1e-9, `Δ=${(e1.level - e0.level).toFixed(2)}`);
 }
 
+// ── 10. assist-runtime 疲劳贡献（衰减数学,Node 无 localStorage → 空通道安全） ──
+{
+  const { getFatigueBoost, BOOST_RULES } = await import('./assist-runtime.js');
+  assert('无存储通道时 boost=0(不炸)', getFatigueBoost() === 0);
+  // 衰减曲线纯数学:注入假通道
+  const fake = { fatigueBoost: 20, boostTs: 1000000 };
+  globalThis.localStorage = {
+    getItem: k => k === 'kneeup:assist.v1' ? JSON.stringify(fake) : null,
+    setItem() {}, removeItem() {},
+  };
+  const at0 = getFatigueBoost(1000000);                       // t=0 → 20
+  const atHalf = getFatigueBoost(1000000 + BOOST_RULES.BOOST_DECAY_MS / 2); // 半衰 → 10
+  const atEnd = getFatigueBoost(1000000 + BOOST_RULES.BOOST_DECAY_MS + 1);  // 过期 → 0
+  assert('boost 衰减:0/半衰/过期', at0 === 20 && atHalf === 10 && atEnd === 0, `${at0}/${atHalf}/${atEnd}`);
+  delete globalThis.localStorage;
+}
+
 console.log('─'.repeat(48));
 console.log(`RESULT  ${pass} passed, ${fail} failed`);
 process.exitCode = fail ? 1 : 0;

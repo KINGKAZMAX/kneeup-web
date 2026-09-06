@@ -2,12 +2,17 @@
 // 膝角入训练目标带（plan.v1，默认 100-140°）→ 充能；合格 rep → 飞艇升一格；
 // 连击 ×2；plan.sets 组完成 → 冲线结算。安全：<80° / >185° 两次 → danger + 暂停；
 // 自评 0-10（≥4 建议结束本组）。结算写 sessions.v1（CONTRACT schema，source 跟通道）。
+// Assist Level 联动（assist-sim 驱动，standup 场景）：数值越高 → 目标带越宽（±0.2°/pp）、
+// 节奏越宽（tempoMs ×(1+level/100)）；HUD 顶栏 ASSIST chip 实时显示；结算把疲劳贡献写回 assist.v1。
 // 接口：mountGame(el, driver)，driver = { getFrame()→frame|null, onRep?(ev, info) }，
 // frame = { ts, angleL, angleR|null, visibility, source:'live'|'simulated', landmarks }。
 // UI 文案只用「训练/动作质量/自评」口径；#E5544B/#F0B34E 仅安全语义（经 tokens 变量引用）。
 
 import { RepCounter, symmetry, qualityScore, clamp } from '../ai/pose-engine.js';
 import { store } from '../store.js';
+import { createAssistSim } from '../ai/assist-sim.js';
+import { AssistEngine } from '../ai/assist-engine.js';
+import { getFatigueBoost, addFatigueBoost } from '../ai/assist-runtime.js';
 
 const ARC_MIN = 60, ARC_MAX = 190;          // 目标弧量程（度）
 const RED_DEEP = 80, RED_EXT = 185;         // 红线：过深 / 过伸（CONTRACT 安全语义）
@@ -42,6 +47,7 @@ export function mountGame(el, driver) {
     <div class="kug-top">
       <span class="kug-title">膝望升空 <span class="en">KNEE-UP LIFT</span></span>
       <span class="kug-state" data-role="state">SIMULATED</span>
+      <span class="kug-state kug-assist" data-role="assist" title="Assist Level 联动:数值越高,目标角度带越宽、节奏越宽">ASSIST --%</span>
       <span class="kug-note" data-role="plan">Plan 默认 · ${plan.sets}组×${plan.reps}次 · 目标带 ${plan.band[0]}-${plan.band[1]}°</span>
     </div>
     <div class="kug-main">
@@ -98,6 +104,31 @@ export function mountGame(el, driver) {
     };
   }
   const counter = new RepCounter(); // CONTRACT 默认：DOWN<100 / UP>160 / 谷底≥400ms
+
+  /* ── Assist Level 联动（assist-sim 驱动，standup 场景，2Hz 节流） ── */
+  const assistSim = createAssistSim({ seed: 23, scenario: 'standup' });
+  const assistEng = new AssistEngine();
+  let assistLevel = 0, lastAssistTick = 0;
+  const dynBand = () => { const w = assistLevel * 0.2; return [Math.max(60, plan.band[0] - w), Math.min(180, plan.band[1] + w)]; };
+  const dynTempoMs = () => 3000 * (1 + assistLevel / 100);
+  function assistTick(now) {
+    if (now - lastAssistTick < 500) return;
+    lastAssistTick = now;
+    const af = assistSim.frame(now);
+    const symNow = S.symN ? S.symSum / S.symN : null;
+    const runMin = S.tsStart ? (Date.now() - S.tsStart) / 60000 : 0;
+    const fatigue = clamp(af.fatigue * 0.2 + getFatigueBoost() + runMin * 3, 0, 100);
+    const d = assistEng.update({ activity: 'standup', speed: af.speed, si: symNow != null ? 100 - symNow : af.si, fatigue }, now);
+    const lv = Math.round(d.level);
+    if (lv !== assistLevel) {
+      assistLevel = lv;
+      const band = dynBand();
+      setBand(ui.zone, band[0], band[1]);
+      ui.assist.textContent = `ASSIST ${lv}%`;
+      ui.assist.classList.toggle('on', lv > 0);
+      ui.plan.textContent = `Plan 默认 · ${plan.sets}组×${plan.reps}次 · 目标带 ${Math.round(band[0])}-${Math.round(band[1])}°（ASSIST 联动加宽）`;
+    }
+  }
 
   /* ── 静态刻度：目标带 / PERFECT 中心带 / 红线区 / 升格缺口 ── */
   const setBand = (node, lo, hi) => {
@@ -231,10 +262,12 @@ export function mountGame(el, driver) {
     renderState(); renderProgress();
   }
 
-  /* ── sessions.v1 写入（CONTRACT schema；source 跟通道） ── */
+  /* ── sessions.v1 写入（CONTRACT schema；source 跟通道）+ 疲劳贡献写回 assist.v1 ── */
   function writeSession(win) {
     if (S.sessionWritten || !S.tsStart) return;
     S.sessionWritten = true;
+    const elapsedMin = (Date.now() - S.tsStart) / 60000;
+    addFatigueBoost(Math.min(40, Math.round(S.qualified * 1.5 + S.redlines * 3 + elapsedMin * 2)));
     const flag = S.redlines >= REDLINE_PAUSE_AT ? 'stop'
       : (S.redlines > 0 || (S.pain ?? 0) >= PAIN_STOP_AT) ? 'caution' : 'none';
     const sessions = store.get('sessions.v1', []);
@@ -263,7 +296,7 @@ export function mountGame(el, driver) {
   function handleRep(ev) {
     if (S.voidPending) { S.voidPending = false; flashAlert('该次不计（出安全角度）', false); return; }
     const symNow = S.symN ? S.symSum / S.symN : null;
-    const q = qualityScore({ sym: symNow, depth: ev.depth, zone: plan.band, repMs: ev.durationMs });
+    const q = qualityScore({ sym: symNow, depth: ev.depth, zone: dynBand(), repMs: ev.durationMs, tempoMs: dynTempoMs() });
     if (q != null) { S.qualitySum += q; S.qualityN++; }
     const perfect = Math.abs(ev.depth - center) <= CENTER_TOL;
     if (perfect) S.perfect++;
@@ -305,10 +338,11 @@ export function mountGame(el, driver) {
 
     if (S.phase !== 'run') { S.lastT = now; return; }
 
-    // 充能：入目标带
+    // 充能：入目标带（Assist Level 联动动态带）
     const dt = S.lastT ? Math.min(now - S.lastT, 500) : 0; // 暂停/丢帧后 dt 截断，防充能跳变
     S.lastT = now;
-    if (g >= plan.band[0] && g <= plan.band[1]) S.charge = clamp(S.charge + dt / CHARGE_FULL_MS, 0, 1);
+    const band = dynBand();
+    if (g >= band[0] && g <= band[1]) S.charge = clamp(S.charge + dt / CHARGE_FULL_MS, 0, 1);
     renderProgress();
 
     // 安全红线：<80 过深 / >185 过伸（两次 → danger + 暂停）
@@ -332,6 +366,7 @@ export function mountGame(el, driver) {
     rafId = requestAnimationFrame(tick);
     if (now - lastLoop < LOOP_MS) return;
     lastLoop = now;
+    assistTick(now);
     const f = driver.getFrame();
     if (f) { S.phase = S.phase === 'idle' ? 'run' : S.phase; processFrame(f, now); }
     else if (S.phase === 'run') { S.lastT = now; }

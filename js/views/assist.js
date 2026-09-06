@@ -3,6 +3,7 @@
 import { tok } from '../viz/charts.js';
 import { AssistEngine, ACTIVITY_LABELS, HARD_CAP, MAX_RATE_PER_SEC, SI_THRESHOLD, FATIGUE_THRESHOLD } from '../ai/assist-engine.js';
 import { createAssistSim, ASSIST_SCENARIOS } from '../ai/assist-sim.js';
+import { getFatigueBoost, writeAssistSnapshot } from '../ai/assist-runtime.js';
 
 const WINDOW_S = 30;          // 曲线窗口 30s
 const PUSH_HZ = 10;           // 曲线采样
@@ -147,7 +148,7 @@ export function render(root) {
 
     <div class="panel">
       <h3>输入因子 Inputs</h3>
-      <p class="panel-sub">模拟传感流 · 随场景变化 · 观察项不参与 v1 规则(膝角/速度)</p>
+      <p class="panel-sub">模拟传感流 · 随场景变化 · 观察项不参与 v1 规则(膝角/速度)· 疲劳含训练游戏结算回写(10 分钟衰减)</p>
       <div class="as-factors">
         <div class="as-factor"><span class="k">当前动作</span><span class="v badge" id="as-f-act">平地 FLAT</span></div>
         <div class="as-factor"><span class="k">膝角 Knee</span><span class="v" id="as-f-knee">—</span><span class="bar"><i id="as-b-knee"></i><em style="left:${(100 / 190) * 100}%"></em></span></div>
@@ -197,7 +198,7 @@ export function render(root) {
     si: root.querySelector('#as-b-si'), fat: root.querySelector('#as-b-fat'),
   };
 
-  const state = { buf: [], clock: 0, lastPush: 0, lastDom: 0, lastSig: '', raf: 0, dead: false };
+  const state = { buf: [], clock: 0, lastPush: 0, lastDom: 0, lastSnap: 0, lastSig: '', raf: 0, dead: false };
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function pushFeed(d, wallTs) {
@@ -218,7 +219,9 @@ export function render(root) {
   function tick(now) {
     if (state.dead) return;
     const f = sim.frame(now);
-    const d = eng.update(f, now);
+    const boost = getFatigueBoost();           // 游戏结算写回的疲劳贡献(10min 衰减)
+    const fatigueTotal = clamp(f.fatigue + boost, 0, 100);
+    const d = eng.update({ ...f, fatigue: fatigueTotal }, now);
     state.clock = now / 1000;
 
     if (now - state.lastPush >= 1000 / PUSH_HZ) {
@@ -236,14 +239,18 @@ export function render(root) {
       F.knee.textContent = `${Math.round(f.kneeAngle)}°`;
       F.speed.textContent = `${f.speed.toFixed(1)} km/h`;
       F.si.textContent = `${f.si.toFixed(1)} %`;
-      F.fat.textContent = `${Math.round(f.fatigue)} /100`;
+      F.fat.textContent = `${Math.round(fatigueTotal)} /100${boost > 0.5 ? `(含训练回写 +${Math.round(boost)})` : ''}`;
       B.knee.style.width = `${clamp(f.kneeAngle / 190 * 100, 0, 100)}%`;
       B.speed.style.width = `${clamp(f.speed / 6 * 100, 0, 100)}%`;
       B.si.style.width = `${clamp(f.si / 25 * 100, 0, 100)}%`;
-      B.fat.style.width = `${clamp(f.fatigue, 0, 100)}%`;
+      B.fat.style.width = `${clamp(fatigueTotal, 0, 100)}%`;
       const mods = d.modifiers.reduce((s, m) => s + m.delta, 0);
       readout.textContent = `基准 ${d.base}% ＋ 修正 +${mods}% ＝ 目标 ${d.target}%${d.capped ? ` · 已截断至 ${HARD_CAP}%` : ''}${d.rateLimited ? ` · 限速输出 ${d.level.toFixed(1)}%` : ''}`;
       pushFeed(d, Date.now());
+    }
+    if (now - state.lastSnap > 500) {
+      state.lastSnap = now;
+      writeAssistSnapshot({ level: d.level, activity: d.activity });   // 跨页共享快照
     }
     state.raf = requestAnimationFrame(tick);
   }

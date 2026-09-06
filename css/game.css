@@ -13,6 +13,8 @@
 .kug-state.live { color: var(--accent); border-color: rgba(67,118,235,.5); }
 .kug-state.paused { color: var(--warn); border-color: rgba(240,179,78,.4); }
 .kug-state.safe { color: var(--danger); border-color: rgba(229,84,75,.5); }
+.kug-assist { color: var(--muted); }
+.kug-assist.on { color: var(--accent-2); border-color: rgba(67,118,235,.5); background: var(--accent-mist); }
 .kug-note { font-size: .7rem; color: var(--muted); }
 
 /* ── 主体：桌面 竖轨（arc 左 / ship 右）；手机纵向堆叠 ── */
