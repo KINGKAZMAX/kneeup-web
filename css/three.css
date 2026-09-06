@@ -77,6 +77,16 @@ html, body { height: 100%; overflow: hidden; }
 }
 .pin:hover .dot, .pin.is-hot .dot { transform: scale(1.5); }
 
+/* 部位热力引线标签（heat 模式）：蓝点(热力色) + 白虚线 + 数值标签 */
+.pin-heat .lead {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-.5px);
+  width: 0; height: 20px; border-left: 1px dashed rgba(255, 255, 255, .55);
+  pointer-events: none;
+}
+.pin-heat .lbl { bottom: 42px; display: flex; align-items: baseline; gap: 4px; }
+.pin-heat .lbl b { font-weight: 600; }
+.pin-heat .lbl .val { font-family: var(--font-mono); font-style: normal; color: var(--accent-2); }
+
 /* ---- 锚点结构卡片 ---- */
 #zone-card { z-index: 12; width: 292px; padding: 14px 16px; }
 #zone-card header { display: flex; align-items: baseline; gap: 8px; padding-right: 20px; flex-wrap: wrap; }

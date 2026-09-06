@@ -1,11 +1,16 @@
 // js/three/scene.js —— KneeUp 护具 3D 实验室（W4，合并 layers/pins/cameras/fallback 单文件）
 // 依据：CONTRACT 3D 契约 + D2/C3/K6/C6 裁决；灯光/自动扶正/材质照抄 ../kneeup-3d-preview 已验证配方。
-// 主角=护具整机 leg_web.glb（主角反转，per K6）；三模式 product/wear/heat（inner 占位禁用）；
-// heat=四锚点球（CONTRACT v0 手填坐标 + K10 gearAtlas 文案）；WebGL 失败/微信 UA/模型失败 → p2 轮播兜底。
+// 主角=护具整机 leg_web.glb（主角反转，per K6）；四模式 product/wear/inner/heat：
+// inner=程序化解剖示意（股骨/胫骨/腓骨/髌骨/半月板，基础几何体；护具半透明；角标 ANATOMY SCHEMATIC 常驻）；
+// heat=七区部位热力（读 kneeup:body.regions.v1，钴蓝→warn→danger 梯度；演示种子数据→SIMULATED chip）；
+// WebGL 失败/微信 UA/模型失败 → p2 轮播兜底。
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { getBody } from '../data/repo.js';
+import { bus } from '../bus.js';
+import { painToColor, REGION_META } from '../body/bodymap.js';
 
 /* ---------------- 常量与数据 ---------------- */
 const BG = '#0B0C0E', ACCENT = '#4376EB', PRIMARY = '#2144B2', GHOST = '#4376EB';
@@ -15,30 +20,27 @@ const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const COARSE = matchMedia('(pointer: coarse)').matches;
 const SPIN_SPEED = 0.35;             // rad/s（CONTRACT/预览页同值）
 
-// 四锚点（K10 §③ gearAtlas 中英文案逐字；off=相对膝中心手填偏移，CONTRACT v0 + 自估微调）
-const gearAtlas = [
-  { id: 'gear-patella-open', short: '髌骨开口', cn: '髌骨开口区', en: 'Patella Opening', off: [0, 0, .13], r: .055,
-    copyCn: '髌骨开口为膝盖前侧留出空间，减少屈伸中的压迫感，动作更顺畅。',
-    copyEn: 'An opening leaves space at the kneecap, easing pressure through each bend for smoother movement.' },
-  { id: 'gear-airbag', short: '气囊区', cn: '气囊区', en: 'Air Chamber', off: [0, .38, -.10], r: .055,
-    copyCn: '侧翼内置可调气囊，充气后贴合腿部轮廓，提供可调节的支撑感与穿着舒适度。',
-    copyEn: 'Adjustable air chambers along the side panels conform to the leg when inflated — a tunable sense of support and comfort.' },
-  { id: 'gear-airway', short: '气道区', cn: '气道区', en: 'Air Channel', off: [-.28, -.02, 0], r: .05,
-    copyCn: '面板间的导气通道在运动中帮助空气流通，减少闷热积汗。',
-    copyEn: 'Channels between panels keep air moving while you move, helping cut heat and sweat buildup.' },
-  { id: 'gear-strap', short: '绑带', cn: '绑带区', en: 'Strap', off: [.34, .48, 0], r: .05,
-    copyCn: '双向绑带单手调节松紧，让支撑稳固贴合而不勒压。',
-    copyEn: 'Dual-pull straps adjust one-handed, holding the support steady without pinching.' },
+// 七区热力锚点（body.regions.v1 kebab 键；off=相对膝中心手填偏移，视觉校准）
+const HEAT_ANCHORS = [
+  { id: 'knee-anterior',  off: [0, .02, .165],   r: .06 },  // 膝前（髌面）
+  { id: 'knee-medial',    off: [-.15, -.01, .02],  r: .05 },  // 膝内侧
+  { id: 'knee-lateral',   off: [.15, -.01, .02],   r: .05 },  // 膝外侧
+  { id: 'knee-posterior', off: [0, -.08, -.155],  r: .05 },  // 膝后（略下移，投影与膝前错开）
+  { id: 'hip',            off: [.18, .56, .02],   r: .055 }, // 髋（大腿上段旁）
+  { id: 'ankle',          off: [.10, -.55, .03],  r: .045 }, // 踝
+  { id: 'contra',         off: [-.34, .02, 0],    r: .05 },  // 对侧对照（无护具侧悬浮点）
 ];
 
-// 三模式机位与图层目标（K6 §二机位表；inner 本轮不实现）
+// 四模式机位与图层目标（K6 §二机位表扩展：inner 解剖 / heat 部位热力）
 const MODES = {
-  product: { cam: [1.9, 1.25, 2.6], tgt: [0, 1.0, 0], brace: 1, ghost: 0, pins: 0, spin: true,
+  product: { cam: [1.9, 1.25, 2.6], tgt: [0, 1.0, 0], brace: 1, ghost: 0, bones: 0, pins: 0, spin: true,
              hint: '自动缓旋 · 拖拽旋转 / 滚轮缩放' },
-  wear:    { cam: [0, 1.15, 3.1], tgt: [0, 1.05, 0], brace: .85, ghost: 1, pins: 0, spin: false,
+  wear:    { cam: [0, 1.15, 3.1], tgt: [0, 1.05, 0], brace: .85, ghost: 1, bones: 0, pins: 0, spin: false,
              hint: '胶囊腿为比例示意 · 护具半透明展示佩戴关系' },
-  heat:    { cam: [.4, 1.2, 2.7], tgt: [0, 1.0, 0], brace: 1, ghost: 0, pins: 1, spin: false,
-             hint: '点击/触碰钴蓝锚点 · 查看产品结构说明' },
+  inner:   { cam: [.55, 1.1, 2.15], tgt: [0, .95, 0], brace: .24, ghost: 0, bones: 1, pins: 0, spin: false,
+             hint: '解剖示意 · 护具半透明，内部为程序化示意骨骼（非医学模型）' },
+  heat:    { cam: [.4, 1.2, 2.7], tgt: [0, 1.0, 0], brace: .5, ghost: .85, bones: 0, pins: 1, spin: false,
+             hint: '部位热力 · 钴蓝→琥珀→红 = 自评 0→10 · 点击热点查看记录' },
 };
 
 /* ---------------- DOM ---------------- */
@@ -118,7 +120,7 @@ function boot(renderer) {
   scene.add(pivot);
 
   /* ---- 图层透明度渐隐系统（300ms lerp；<1 时 depthWrite=false 防排序黑块，per D2§②） ---- */
-  const layers = { brace: { mats: [], f: 1, t: 1, group: pivot }, ghost: null, pins: null };
+  const layers = { brace: { mats: [], f: 1, t: 1, group: pivot }, ghost: null, bones: null, pins: null };
   const LERP_K = 10;                    // 1-e^(-10dt) ≈ 300ms 到 95%
   function makeLayer(group, baseMap) {  // baseMap: Map<material, baseOpacity>
     const mats = [...baseMap.entries()].map(([m, base]) => (m.userData.base = base, m.transparent = true, m));
@@ -126,7 +128,7 @@ function boot(renderer) {
   }
   function tickFades(dt) {
     const k = 1 - Math.exp(-LERP_K * dt);
-    for (const key of ['brace', 'ghost', 'pins']) {
+    for (const key of ['brace', 'ghost', 'bones', 'pins']) {
       const L = layers[key]; if (!L) continue;
       L.f += (L.t - L.f) * k;
       const on = L.f > .015;
@@ -192,11 +194,38 @@ function boot(renderer) {
   pivot.add(ghostGroup);
   layers.ghost = makeLayer(ghostGroup, new Map([[gm, .2], [gm2, .2], [gm3, .2]]));
 
-  /* ---- 锚点层：四钴蓝球 + DOM 图钉（heat 模式） ---- */
+  /* ---- 解剖示意层（inner 模式）：程序化骨骼——股骨/胫骨/腓骨/髌骨/半月板 ---- */
+  const bonesGroup = new THREE.Group();
+  bonesGroup.visible = false;
+  pivot.add(bonesGroup);
+  {
+    const boneMat = new THREE.MeshStandardMaterial({ color: '#C7CAD1', roughness: .62, metalness: .05, transparent: true });
+    const cartMat = new THREE.MeshBasicMaterial({ color: ACCENT, transparent: true, opacity: .85 }); // 半月板自发光示意（暗处可见）
+    const femur = new THREE.Mesh(new THREE.CapsuleGeometry(.115, .72, 6, 18), boneMat);   // 股骨骨干
+    femur.position.set(0, KNEE_Y + .47, .02);
+    const condL = new THREE.Mesh(new THREE.SphereGeometry(.092, 18, 14), boneMat);        // 股骨内髁
+    condL.position.set(-.078, KNEE_Y + .03, .035); condL.scale.set(1, 1.15, 1.1);
+    const condR = new THREE.Mesh(new THREE.SphereGeometry(.092, 18, 14), boneMat);        // 股骨外髁
+    condR.position.set(.078, KNEE_Y + .03, .035); condR.scale.set(1, 1.15, 1.1);
+    const tibia = new THREE.Mesh(new THREE.CapsuleGeometry(.082, .62, 6, 18), boneMat);   // 胫骨
+    tibia.position.set(0, KNEE_Y - .42, .02);
+    const fibula = new THREE.Mesh(new THREE.CapsuleGeometry(.028, .56, 4, 10), boneMat);  // 腓骨（外侧细骨）
+    fibula.position.set(.115, KNEE_Y - .40, 0);
+    const patella = new THREE.Mesh(new THREE.SphereGeometry(.062, 18, 14), boneMat);      // 髌骨
+    patella.scale.set(1, 1.18, .55); patella.position.set(0, KNEE_Y + .03, .145);
+    const menL = new THREE.Mesh(new THREE.TorusGeometry(.068, .026, 10, 22, Math.PI * 1.3), cartMat); // 内侧半月板
+    menL.rotation.x = Math.PI / 2; menL.rotation.z = .4; menL.position.set(-.072, KNEE_Y - .01, .035);
+    const menR = new THREE.Mesh(new THREE.TorusGeometry(.068, .026, 10, 22, Math.PI * 1.3), cartMat); // 外侧半月板
+    menR.rotation.x = Math.PI / 2; menR.rotation.z = -.4 + Math.PI; menR.position.set(.072, KNEE_Y - .01, .035);
+    bonesGroup.add(femur, condL, condR, tibia, fibula, patella, menL, menR);
+    layers.bones = makeLayer(bonesGroup, new Map([[boneMat, 1], [cartMat, .85]]));
+  }
+
+  /* ---- 部位热力层（heat 模式）：七区热点 + DOM 引线标签，颜色读 body.regions.v1 ---- */
   const pinsGroup = new THREE.Group();
   pinsGroup.visible = false;
   pivot.add(pinsGroup);
-  const anchors = gearAtlas.map((def) => {
+  const anchors = HEAT_ANCHORS.map((def) => {
     const g = new THREE.Group();
     g.position.set(def.off[0], KNEE_Y + def.off[1], def.off[2]);
     const core = new THREE.Mesh(new THREE.SphereGeometry(def.r, 24, 16),
@@ -205,16 +234,42 @@ function boot(renderer) {
       new THREE.MeshBasicMaterial({ color: ACCENT }));
     g.add(core, halo); g.userData = { def, core, halo, h: 0, screen: { x: 0, y: 0, vis: false } };
     pinsGroup.add(g);
-    // DOM 图钉
+    // DOM 引线标签：蓝点 + 白虚线 + 标签（含数值）
     const pin = document.createElement('button');
-    pin.className = 'pin'; pin.dataset.zone = def.id;
-    pin.innerHTML = `<span class="pp"><i class="dot"></i><span class="lbl">${def.short}</span></span>`;
+    pin.className = 'pin pin-heat'; pin.dataset.zone = def.id;
+    pin.innerHTML = `<span class="pp"><i class="dot"></i><i class="lead"></i><span class="lbl"><b>${REGION_META[def.id].cn}</b><em class="val"></em></span></span>`;
     pin.addEventListener('click', (ev) => { ev.stopPropagation(); openCard(g); });
     pinsBox.appendChild(pin);
     g.userData.pin = pin;
     return g;
   });
   layers.pins = makeLayer(pinsGroup, new Map(anchors.flatMap((a) => [[a.userData.core.material, .95], [a.userData.halo.material, .16]])));
+
+  /* 热力数据：读 body.regions.v1；演示种子（note 以「演示示例」开头）→ SIMULATED chip */
+  let heatDemo = true;
+  function updateHeat() {
+    const { regions } = getBody();
+    heatDemo = (regions['knee-anterior']?.note || '').startsWith('演示示例');
+    for (const a of anchors) {
+      const id = a.userData.def.id;
+      const r = regions[id] || { pain: 0, load: 0 };
+      const v = Math.min(10, Math.max(0, Number(r.pain) || 0));
+      const color = painToColor(v) || '#8B909A';        // 0 值中性灰（无色阶处）
+      a.userData.core.material.color.set(color);
+      a.userData.halo.material.color.set(color);
+      a.userData.val = v; a.userData.load = r.load ?? 0; a.userData.note = r.note || '';
+      const dot = a.userData.pin.querySelector('.dot');
+      dot.style.background = color; dot.style.boxShadow = `0 0 0 3px ${color}38, 0 0 16px ${color}b3`;
+      a.userData.pin.querySelector('.val').textContent = ` ${v}/10`;
+    }
+    const chip = $('#heat-chip');
+    if (chip) {
+      chip.className = 'ku-chip ' + (heatDemo ? 'sim' : '');
+      chip.textContent = heatDemo ? 'SIMULATED · 演示占位' : 'SUBJECTIVE · 主观记录';
+    }
+  }
+  updateHeat();
+  bus.on('region:update', updateHeat);
 
   /* ---- 模式切换 ---- */
   let mode = 'product', spinOn = MODES.product.spin && !REDUCED;
@@ -223,11 +278,13 @@ function boot(renderer) {
     if (!MODES[name]) return;
     mode = name;
     const m = MODES[name];
-    layers.brace.t = m.brace; layers.ghost.t = m.ghost; layers.pins.t = m.pins;
+    layers.brace.t = m.brace; layers.ghost.t = m.ghost; layers.bones.t = m.bones; layers.pins.t = m.pins;
     spinOn = m.spin && !REDUCED;
     tweenCam(m.cam, m.tgt);
     if (!m.spin) tweenPivot0();          // 离开缓旋模式时把模型缓转回正脸
     pinsBox.classList.toggle('is-on', name === 'heat');
+    const hc = $('#heat-chip');
+    if (hc) hc.style.display = name === 'heat' ? '' : 'none';
     hintEl.textContent = m.hint;
     btns.forEach((b) => b.classList.toggle('is-on', b.dataset.mode === name));
     closeCard();
@@ -299,9 +356,13 @@ function boot(renderer) {
   }
 
   function openCard(a) {
-    const d = a.userData.def;
-    cardTitle.textContent = d.cn; cardEn.textContent = d.en.toUpperCase();
-    cardCn.textContent = d.copyCn; cardEnCopy.textContent = d.copyEn;
+    const u = a.userData, id = u.def.id;
+    const m = REGION_META[id];
+    cardTitle.textContent = `${m.cn}区`; cardEn.textContent = m.en.toUpperCase();
+    cardCn.textContent = `自评 ${u.val ?? 0}/10 · 负荷参考 ${u.load ?? 0}/10（主动记录）`;
+    cardEnCopy.textContent = u.note ? `备注:${u.note}` : '色带:钴蓝(轻微)→琥珀(中等)→红(明显)';
+    cardEl.querySelector('.ku-chip').className = 'ku-chip ' + (heatDemo ? 'sim' : '');
+    cardEl.querySelector('.ku-chip').textContent = heatDemo ? 'SIMULATED · 演示占位' : 'SUBJECTIVE · 主观记录';
     cardAnchor = a;
     cardEl.hidden = false;
     setHover(a);

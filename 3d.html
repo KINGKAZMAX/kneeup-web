@@ -27,16 +27,17 @@
 <nav class="hud" id="modes" role="group" aria-label="视图模式">
   <button class="mode-btn is-on" data-mode="product">产品特写<span>PRODUCT</span></button>
   <button class="mode-btn" data-mode="wear">佩戴关系<span>WEAR</span></button>
-  <button class="mode-btn" data-mode="inner" disabled title="内部结构 · 本轮预留占位">内部结构<span>INNER</span></button>
-  <button class="mode-btn" data-mode="heat">结构热点<span>HEAT</span></button>
+  <button class="mode-btn" data-mode="inner" title="内部结构 · 程序化解剖示意（非医学模型）">内部结构<span>INNER</span></button>
+  <button class="mode-btn" data-mode="heat">部位热力<span>HEAT</span></button>
 </nav>
 
 <p class="hud" id="hint">自动缓旋 · 拖拽旋转 / 滚轮缩放</p>
 
-<!-- 右下：合规角标 + 模型标注 -->
+<!-- 右下：合规角标 + 模型标注 + heat 数据 chip -->
 <aside class="hud" id="corner">
   <span class="tag">解剖示意 · ANATOMY SCHEMATIC</span>
   <span class="meta">模型：自研 CAD 瘦身 GLB · 12.8万面</span>
+  <span class="ku-chip sim" id="heat-chip">SIMULATED · 演示占位</span>
 </aside>
 
 <!-- 锚点结构卡片（K10 gearAtlas 中英文案） -->
