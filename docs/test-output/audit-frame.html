@@ -13,7 +13,7 @@
 <script>
   // ?page=../../index.html&w=390&h=844 —— iframe 宽度即被测页布局视口宽(媒体查询真实生效)
   var q = new URLSearchParams(location.search);
-  var page = q.get('page') || '../../index.html';
+  var page = q.get('page') || '../../demo.html';
   var w = parseInt(q.get('w') || '390', 10);
   var h = parseInt(q.get('h') || '844', 10);
   var f = document.getElementById('f');

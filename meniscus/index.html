@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MENISCUS SHIELD — Live Knee AI</title>
+<script src="../vendor/chartjs/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0B0C0E;--panel:#1A1B1F;--line:#2B2D33;--blue:#4376EB;--blue-deep:#163487;--warn:#F0B34E;--danger:#E5544B;--text:#E8EAEE;--muted:#8B909A;--brand:#2144B2}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Helvetica Neue',sans-serif;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(11,12,14,.92);backdrop-filter:blur(8px);z-index:10}
+.brand{font-weight:800;letter-spacing:.12em;font-size:15px}
+.brand em{color:var(--blue);font-style:normal}
+.tag{color:var(--muted);font-size:12px}
+main{max-width:1200px;margin:0 auto;padding:18px 22px 60px}
+.hero{text-align:center;padding:26px 0 10px}
+.hero h1{font-size:clamp(24px,4vw,40px);letter-spacing:.06em}
+.hero h1 span{color:var(--blue)}
+.hero p{color:var(--muted);margin-top:10px;font-size:15px}
+.stage{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;margin-top:18px}
+@media(max-width:900px){.stage{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.card h3{font-size:13px;color:var(--muted);letter-spacing:.08em;margin-bottom:10px;text-transform:uppercase}
+#videoWrap{position:relative;border-radius:10px;overflow:hidden;background:#000;aspect-ratio:4/3}
+video,#canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#canvas{z-index:2}
+#overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:3;background:rgba(8,9,11,.6);backdrop-filter:blur(2px)}
+#overlay.hidden{display:none}
+.btn{background:var(--brand);color:#fff;border:none;border-radius:999px;padding:13px 34px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.04em}
+.btn:hover{background:var(--blue);filter:none}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:400;font-size:12px;padding:8px 16px}
+#fileHint{color:var(--muted);font-size:12px}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metric{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+.metric .v{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.metric .l{font-size:11px;color:var(--muted);margin-top:2px}
+.metric.warn .v{color:var(--warn)}
+.metric.bad .v{color:var(--danger)}
+#chartBox{height:170px;margin-top:12px}
+.alerts{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.alert{padding:10px 12px;border-radius:8px;font-size:13px;background:rgba(240,179,78,.10);border:1px solid rgba(240,179,78,.35);color:var(--warn);display:none}
+.alert.on{display:block;animation:pop .25s}
+.alert.red{background:rgba(229,84,75,.12);border-color:rgba(229,84,75,.4);color:var(--danger)}
+@keyframes pop{from{transform:scale(.96);opacity:0}}
+.channels{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.ch{border:1px dashed var(--line);border-radius:8px;padding:8px;font-size:11px;color:var(--muted);text-align:center}
+.ch b{color:var(--text);display:block;font-size:12px;margin-bottom:2px}
+.ch.sim{border-style:solid;border-color:var(--blue-deep)}
+footer{margin-top:26px;color:var(--muted);font-size:11.5px;line-height:1.7;border-top:1px solid var(--line);padding-top:14px}
+.kv{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.kv span{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 10px;font-size:11px}
+#report{margin-top:14px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;display:none}
+#report.on{display:block}
+#report b{color:var(--blue)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">MENISCUS <em>SHIELD</em></div>
+  <div class="tag">Live Knee-Motion AI · runs 100% in your browser · no video uploaded</div>
+</header>
+<main>
+  <div class="hero">
+    <h1>Your knee, <span>measured live.</span></h1>
+    <p>Squat in front of the camera — see knee-flexion angles and left/right compensation in real time.<br>这是 MENISCUS SHIELD 智能护膝的软件面：同一套分析引擎，未来跑在护膝内的织物传感器上。</p>
+  </div>
+
+  <div class="stage">
+    <div class="card">
+      <h3>Live Analysis · 实时动作分析</h3>
+      <div id="videoWrap">
+        <video id="video" playsinline muted></video>
+        <canvas id="canvas"></canvas>
+        <div id="overlay">
+          <button class="btn" id="startBtn">▶ Start Live Demo</button>
+          <div>No camera? <label for="fileIn" style="color:var(--blue);cursor:pointer;text-decoration:underline">upload a squat video</label></div>
+          <input type="file" id="fileIn" accept="video/*" style="display:none">
+          <div id="fileHint">Stand sideways to the camera, full body visible</div>
+        </div>
+      </div>
+      <div class="channels">
+        <div class="ch"><b>Channel A · Vision</b>摄像头姿态估计 · 本地推理</div>
+        <div class="ch sim"><b>Channel B · Textile sensor (simulated)</b>护膝织物应变 · 模拟数据流</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Dashboard</h3>
+      <div class="metrics">
+        <div class="metric" id="mLeft"><div class="v">--</div><div class="l">LEFT knee 膝角</div></div>
+        <div class="metric" id="mRight"><div class="v">--</div><div class="l">RIGHT knee 膝角</div></div>
+        <div class="metric" id="mDiff"><div class="v">--</div><div class="l">L/R difference 左右差</div></div>
+        <div class="metric" id="mCount"><div class="v">0</div><div class="l">Squats counted 深蹲</div></div>
+      </div>
+      <div id="chartBox"><canvas id="chart"></canvas></div>
+      <div class="alerts">
+        <div class="alert" id="aComp">⚠ 左右代偿 Left/Right compensation &gt; 10°</div>
+        <div class="alert" id="aShift">⚠ 重心偏移 Hip lateral shift</div>
+        <div class="alert" id="aShallow">▲ 蹲浅 Shallow squat — knee angle stayed above 110°</div>
+      </div>
+      <div id="report"></div>
+      <div class="kv">
+        <span>Privacy: on-device only</span><span>No video stored</span><span>No face ID</span><span>PDPO / GDPR / PIPL aware</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <b>MENISCUS SHIELD</b> is a consumer sports product concept: physical support + movement-quality feedback.
+    This demo provides training feedback only — it is <b>not</b> a medical device and makes no diagnostic, preventive, or therapeutic claims.
+    本页面为 AIx Origin Summit 2026 比赛期间开发（软件面演示）；护膝硬件面见项目渲染与工程文件。Channel B 为模拟数据，实机将由护膝内嵌织物应变传感器经 BLE 汇入同一接口。
+  </footer>
+</main>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

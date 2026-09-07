@@ -4,6 +4,18 @@
 
 **线上地址：https://kingkazmax.github.io/kneeup-web/**（GitHub Pages，`main` 分支根目录自动部署）
 
+## 🔗 整合演示站（2026-09-06 新，评委/观众一站式入口）
+
+首页 `index.html` 已升级为**整合单页**（conzian 式排版 × 碳黑钴蓝）：Hero → 产品三要素 → 数据三卡 → 设计链时间线（草图→CAD→模具→硅胶→渲染）→ 模型渲染图三联 → **3D 实验室（iframe 四模式）** → **应用矩阵（iframe 含 #/assist 助力等级面板）** → **实时姿态演示（iframe meniscus/，MediaPipe 全本地化断网可跑）** → 13 页路演 Deck 横滚画廊（点击灯箱放大）→ 55 秒演示视频 → 硬件链路图 → **扫码区（二维码直跳本站）** → 合规页脚。原落地页保留为 `demo.html`。
+
+| 整合站区块 | 说明 |
+|---|---|
+| index.html | 整合单页（新）· 页内二维码扫开即本站 |
+| demo.html | 原落地页（含 #demo 实时演示/游戏，MediaPipe） |
+| apps.html | 应用壳（六视图 hash 路由） |
+| 3d.html | 3D 实验室（product/wear/inner/heat 四模式） |
+| meniscus/ | MENISCUS SHIELD 姿态演示（vendor 本地化，断网可跑） |
+
 ## 正式入口（手机/电脑直接打开）
 
 | 页面 | 地址 |

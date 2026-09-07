@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>KneeUp 膝望 · 可穿戴运动传感原型</title>
+  <meta name="description" content="KneeUp 膝望：可穿戴运动传感原型——浏览器即时动作质量反馈、游戏化训练与真护具 3D 模型。Support you feel. Feedback you can act on.">
+  <!-- og 占位：og.png 待按 C11 §三 重做（1200×630，碳黑×钴蓝，先引用路径） -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="KneeUp 膝望 — Support you feel. Feedback you can act on.">
+  <meta property="og:description" content="可穿戴运动传感原型：浏览器即时动作质量反馈与游戏化训练，附真护具 3D 模型。">
+  <meta property="og:image" content="./assets/img/og.png">
+  <meta property="og:url" content="./">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- 极少关键内联样式：首屏底色防闪白 -->
+  <style>html{background:#0B0C0E}</style>
+  <link rel="stylesheet" href="./css/tokens.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/landing.css">
+</head>
+<body>
+
+  <!-- 01 sticky 导航 -->
+  <header class="site-nav" id="top">
+    <div class="container nav-inner">
+      <a class="brand" href="#top">KneeUp <span class="brand-cn">膝望</span></a>
+      <nav class="nav-chips" aria-label="区块导航">
+        <a href="#product">产品</a>
+        <a href="#demo">演示</a>
+        <a href="#tech">技术</a>
+        <a href="#business">商业</a>
+        <a href="#compliance">合规</a>
+        <a href="#team">团队</a>
+      </nav>
+      <a class="btn nav-cta" href="#demo">Try Demo</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- 02 Hero -->
+    <section id="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">可穿戴运动传感原型 · WEARABLE SPORTS-SENSING PROTOTYPE</p>
+          <h1>KneeUp 膝望</h1>
+          <p class="hero-tagline">支撑可感，反馈可用。<br><span class="en">Support you feel. Feedback you can act on.</span></p>
+          <p class="lead">你的随身训练伙伴——打开网页，摄像头即时读出下蹲深度、左右对称与动作质量。<br><span class="muted en">Your always-available training companion — instant squat depth, side-to-side symmetry and movement-quality scores, right in the browser.</span></p>
+          <div class="hero-cta">
+            <a class="btn" href="#demo">Try Live Demo 打开训练演示</a>
+            <a class="btn ghost" href="#demo">观看模拟演示 · Simulated</a>
+          </div>
+          <p class="hero-badges">
+            <span class="ku-chip sim">演示数据 · SIMULATED</span>
+            <span class="ku-chip" title="除非 ● LIVE 灯亮起，页面数据均为模拟">Simulated unless ● LIVE is on</span>
+          </p>
+        </div>
+        <div class="hero-media">
+          <!-- compliance:start --><!-- 否定式合规声明（豁免件，K5/C8） -->
+          <span class="nomed-badge" role="note">Not a medical device · 非医疗器械</span>
+          <!-- compliance:end -->
+          <img src="./assets/img/hero-wear.webp" alt="KneeUp 膝望护具真人佩戴图：上楼梯场景下的膝部支撑" width="880" height="880" loading="eager">
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 #why 问题共识 -->
+    <section id="why" class="alt">
+      <div class="container">
+        <p class="eyebrow">问题共识 · WHY NOW</p>
+        <h2>膝盖默默承受着一切。<br><span class="en">Knees carry the load — silently.</span></h2>
+        <p class="lead">没有反馈，动作走形、负荷累积，都在无声发生。<br><span class="muted en">Without feedback, form slips and stress quietly adds up, training after training.</span></p>
+        <div class="stat-grid">
+          <div class="card stat-card">
+            <p class="stat-num">≈61<span class="stat-unit">/100k·year</span></p>
+            <p class="stat-desc">每年每 10 万人中的半月板相关损伤例数（文献估算）<br><span class="muted en">Meniscus-related injury cases per 100,000 people each year (estimate).</span></p>
+            <p class="stat-foot">来源：PMC9205760 · literature estimate · est.</p>
+          </div>
+          <div class="card stat-card">
+            <p class="stat-num">12–14%<span class="stat-unit">est.</span></p>
+            <p class="stat-desc">文献估算：无症状人群膝部 MRI 中可见半月板信号的比例<br><span class="muted en">Share of asymptomatic knees with meniscus findings on MRI, per literature estimates.</span></p>
+            <p class="stat-foot">来源：literature estimate（文献估算，区间值）</p>
+          </div>
+        </div>
+        <p class="muted note-line">Figures are literature-based context estimates · 以上为文献背景估算，非我方实测数据。</p>
+      </div>
+    </section>
+
+    <!-- 04 #product 产品与 3D -->
+    <section id="product">
+      <div class="container">
+        <p class="eyebrow">产品 · PRODUCT</p>
+        <h2>支撑、通风、智能，一条护具。<br><span class="en">Support, airflow, intelligence — in one sleeve.</span></h2>
+        <div class="product-grid">
+          <a class="card product-card" href="./3d.html" aria-label="打开真护具 3D 模型页">
+            <span class="badge-3d">Interactive 3D · 真护具 CAD 直转</span>
+            <img src="./assets/img/product-water.webp" alt="KneeUp 护具产品渲染图：水面溅射中的整体结构" width="1200" height="750" loading="lazy">
+            <div class="product-card-body">
+              <strong>真护具 3D 模型 · Real-brace 3D</strong>
+              <span class="muted">Rhino CAD 真模直接转 web GLB——旋转、拆层、看结构，不是 bought asset。点击进入 3d.html。</span>
+            </div>
+          </a>
+          <div class="feature-col">
+            <div class="card feature">
+              <img class="feature-img" src="./assets/img/feat-support.webp" alt="护具佩戴特写：支撑结构贴合膝部" width="640" height="640" loading="lazy">
+              <h3>支撑 · Support</h3>
+              <p class="muted">贴合支撑结构，运动中稳住膝盖轨迹，支撑感可感、可调。</p>
+            </div>
+            <div class="card feature">
+              <img class="feature-img" src="./assets/img/feat-airflow.webp" alt="护具结构分解渲染：导流气道贯穿整机" width="640" height="400" loading="lazy">
+              <h3>通风 · Airflow</h3>
+              <p class="muted">导流气道贯穿护具，长训练不下闷，戴得住才谈得上反馈。</p>
+            </div>
+            <div class="card feature">
+              <img class="feature-img contain" src="./assets/img/feat-smart.webp" alt="护具竖构图渲染：传感与反馈模块布局" width="400" height="523" loading="lazy">
+              <h3>智能 · Intelligence</h3>
+              <p class="muted">传感与反馈路线：摄像头即刻可用，织物传感在路上。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 #demo 演示（含 #form 块头，per C7 裁决①） -->
+    <section id="demo" class="alt">
+      <div class="container">
+        <p class="eyebrow">现场演示 · LIVE DEMO</p>
+        <h2>这组动作，做到位了吗？<br><span class="en">Was that rep a clean one?</span></h2>
+        <p class="lead">三条通道即时回答——视觉提示、游戏反馈、实机曲线；全部为动作质量提示，仅供参考。<br><span class="muted en">Three channels answer in real time — visual cues, game feedback and a live hardware trace. Informational form cues only.</span></p>
+        <ul class="evidence-chips" aria-label="证据链">
+          <li class="ku-chip live">看得见 · SEEING</li>
+          <li class="ku-chip live">测得出 · MEASURING</li>
+          <li class="ku-chip live">可解释 · EXPLAINABLE</li>
+        </ul>
+
+        <div class="card demo-card">
+          <div class="demo-main">
+            <div class="stage" aria-label="摄像头演示区">
+              <video id="ku-video" playsinline muted></video>
+              <canvas id="ku-overlay" aria-hidden="true"></canvas>
+              <div class="stage-hint">
+                <p>摄像头画面将在此叠加骨骼、膝角与提示。<br><span class="muted">Camera preview with skeleton overlay appears here.</span></p>
+              </div>
+            </div>
+            <div class="demo-actions">
+              <button class="btn" id="ku-start-live" type="button">打开摄像头演示 · Try Live</button>
+              <button class="btn ghost" id="ku-start-sim" type="button">观看模拟演示 · Simulated</button>
+              <button class="btn ghost" id="ku-start-ble" type="button">连接护具 BLE · LIVE</button>
+              <p class="privacy-note"><span class="ku-chip">ON-DEVICE</span> 摄像头画面只在你的浏览器内计算，不上传、不存人脸。<br><span class="muted en">Frames are processed inside your browser — nothing uploaded, no face stored.</span></p>
+            </div>
+            <div class="cues-wrap">
+              <div class="cues-head"><span class="eyebrow">提示流 · CUES</span><span id="ku-chip" class="ku-chip sim">SIMULATED · 模拟</span></div>
+              <div id="ku-cues" aria-live="polite">
+                <p class="muted">提示流将在此滚动：膝盖方向、下蹲深度、左右对称。<br>Cues appear here during the demo.</p>
+              </div>
+            </div>
+          </div>
+          <aside class="demo-panel" aria-label="实时指标">
+            <p class="eyebrow">实时指标 · METRICS</p>
+            <dl class="metrics">
+              <div class="metric"><dt>左膝峰值角 <span class="muted">L knee</span></dt><dd id="ku-lk" class="mono-val">—</dd></div>
+              <div class="metric"><dt>右膝峰值角 <span class="muted">R knee</span></dt><dd id="ku-rk" class="mono-val">—</dd></div>
+              <div class="metric"><dt>对称度 <span class="muted">Symmetry</span></dt><dd id="ku-sym" class="mono-val">—</dd></div>
+              <div class="metric"><dt>质量分 <span class="muted">Quality</span></dt><dd id="ku-ql" class="mono-val">—</dd></div>
+              <div class="metric"><dt>次数 <span class="muted">Reps</span></dt><dd id="ku-reps" class="mono-val">—</dd></div>
+            </dl>
+            <p class="muted note-line">膝角=髋-膝-踝夹角；计数滞回 DOWN&lt;100° / UP&gt;160°。拒摄像头或无画面时，10 秒内自动落入模拟演示。</p>
+          </aside>
+          <div class="game-wrap">
+            <div class="cues-head"><span class="eyebrow">训练游戏 · GAMIFIED TRAINING</span><span class="ku-chip sim">SIMULATED DEMO</span></div>
+            <div id="ku-game" aria-label="训练游戏区">
+              <p class="muted">深蹲充能、连击上升——做对了一眼可见。开始演示后此区点亮。<br>Charge faster and the combo climbs — good reps show, instantly.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 #tech 技术背书 -->
+    <section id="tech">
+      <div class="container">
+        <p class="eyebrow">技术 · TECH</p>
+        <h2>三层架构，今天能跑两层。<br><span class="en">Three layers — two run today.</span></h2>
+        <div class="stack-grid">
+          <div class="card layer">
+            <p class="eyebrow">L1 · 视觉 AI VISION AI</p>
+            <h3>浏览器里的姿态估计</h3>
+            <p class="muted">MediaPipe Pose 骨骼叠加，膝角、对称度、质量分实时计算，全程 on-device。</p>
+            <span class="layer-tag today">RUNS TODAY · 今天可跑</span>
+          </div>
+          <div class="card layer">
+            <p class="eyebrow">L2 · 规则引擎 RULE ENGINE</p>
+            <h3>计数、区间与提示流</h3>
+            <p class="muted">滞回计数、目标区间判定、提示流生成；桌面 Chrome 可经 Web Serial 直连护具原型读取 sEMG 曲线（● LIVE / ○ SIMULATED 双灯标注，断流自动降级）。</p>
+            <span class="layer-tag today">RUNS TODAY · 今天可跑</span>
+          </div>
+          <div class="card layer is-roadmap">
+            <p class="eyebrow">L3 · 织物传感 TEXTILE SENSING</p>
+            <h3>数据直接从护具来</h3>
+            <p class="muted">织物传感上腿，信号从贴身层直出——不依赖摄像头的那一天。</p>
+            <span class="layer-tag roadmap">ROADMAP · 路线图</span>
+          </div>
+        </div>
+        <p class="tagline">The demo above runs L1 + L2, today. 上方演示，今天就在跑 L1+L2。</p>
+        <div class="hw-strip" aria-label="硬件进度">
+          <div class="hw-item"><strong>肌电 sEMG</strong><span class="hw-status ok">已跑通</span></div>
+          <div class="hw-item"><strong>气囊阵列</strong><span class="hw-status ok">已联调</span></div>
+          <div class="hw-item"><strong>MQTT 上行</strong><span class="hw-status wip">联调中</span></div>
+          <div class="hw-item"><strong>织物传感</strong><span class="hw-status roadmap">路线图</span></div>
+        </div>
+        <p class="muted note-line">硬件已通电、已跑串口链路——不是概念图。All shots are of powered, working units.</p>
+      </div>
+    </section>
+
+    <!-- 07 #business 商业 -->
+    <section id="business" class="alt">
+      <div class="container">
+        <p class="eyebrow">商业 · BUSINESS</p>
+        <h2>两条市场路径。<br><span class="en">Two ways this ships.</span></h2>
+        <div class="biz-grid">
+          <div class="card biz-card">
+            <p class="eyebrow">C 端 · FOR ATHLETES</p>
+            <h3>训练者版</h3>
+            <p class="muted">你的随身训练伙伴——打开网页，摄像头即时读出下蹲深度、左右对称与动作质量。零安装、零硬件门槛。</p>
+            <p class="muted en">Your always-available training companion — instant depth, symmetry and quality scores in the browser.</p>
+            <a class="btn" href="#demo">打开训练演示 · Open the demo</a>
+          </div>
+          <div class="card biz-card">
+            <p class="eyebrow">B 端 · FOR FACILITIES</p>
+            <h3>场馆版</h3>
+            <p class="muted">教练端实时屏：整组学员的动作质量，一块屏幕尽收；训练设置由教练端下发。</p>
+            <p class="muted en">A live coach console — the whole squad's movement quality on one screen.</p>
+            <a class="btn ghost" href="./apps.html">看场馆方案 · See the facility edition</a>
+          </div>
+        </div>
+        <p class="tagline">传感器护具路线验证了真实需求；KneeUp 补的是另一层——纯网页、零安装的 3D 即时动作反馈与游戏化训练。不同的层，不是低配版。</p>
+      </div>
+    </section>
+
+    <!-- 08 #compliance 合规姿态 -->
+    <section id="compliance">
+      <div class="container">
+        <p class="eyebrow">合规 · COMPLIANCE</p>
+        <h2>合规不是页脚小字，是我们交付的第一块部件。<br><span class="en">Compliance is our first shipped component.</span></h2>
+        <!-- compliance:start --><!-- 否定式合规声明（豁免件，K5 §4 / K14 §③） -->
+        <blockquote class="wall-quote">
+          <p>KneeUp 不做医疗宣称：反馈归训练，诊断归医生——合规不是页脚小字，是我们交付的第一块部件。</p>
+          <p class="en">KneeUp is a training tool, not a medical device — form feedback, not diagnosis. We say it up front, on purpose.</p>
+        </blockquote>
+        <!-- compliance:end -->
+        <div class="comp-grid">
+          <!-- compliance:start -->
+          <div class="card comp-card">
+            <h3>非医疗器械 · NOT A MEDICAL DEVICE</h3>
+            <p class="muted">运动支撑与训练反馈原型——不做诊断、不做治疗、不做效果承诺。</p>
+            <p class="muted en">A sports-support, training-feedback prototype: no diagnosis, no treatment, no outcome promises.</p>
+          </div>
+          <!-- compliance:end -->
+          <div class="card comp-card">
+            <h3>数据本地处理 · ON-DEVICE BY DEFAULT</h3>
+            <p class="muted">摄像头画面只在浏览器内计算，不上传、不存人脸。</p>
+            <p class="muted en">Camera frames are computed inside your browser — nothing uploaded, no face stored.</p>
+          </div>
+          <div class="card comp-card">
+            <h3>模拟标注策略 · LABELLED SIMULATED</h3>
+            <p class="muted">凡非实机数据一律挂「模拟 SIMULATED」角标，可被任何人当场验证。</p>
+            <p class="muted en">Anything not from live hardware carries a SIMULATED chip — verifiable on the spot.</p>
+          </div>
+        </div>
+        <!-- compliance:start -->
+        <p class="muted note-line">路线图：产品化后按预期用途判定分级并规划认证路径（计划中，非现有宣称）。/ A planned classification and certification path — planned, not claimed.</p>
+        <!-- compliance:end -->
+      </div>
+    </section>
+
+    <!-- 09 #team 团队 -->
+    <section id="team" class="alt">
+      <div class="container">
+        <p class="eyebrow">团队 · TEAM FREE WILL</p>
+        <h2>把护具做实，把反馈做亮。</h2>
+        <div class="team-grid">
+          <div class="card team-card">
+            <div class="avatar" aria-hidden="true">万</div>
+            <strong>万博阳 · Wan Boyang</strong>
+            <span class="muted">Industrial Design</span>
+            <a href="https://waffledesign.site" rel="noopener">waffledesign.site</a>
+          </div>
+          <div class="card team-card is-tbd">
+            <div class="avatar" aria-hidden="true">·</div>
+            <strong>[待填]</strong>
+            <span class="muted">Hardware / Firmware</span>
+            <span class="muted">[待填]</span>
+          </div>
+          <div class="card team-card is-tbd">
+            <div class="avatar" aria-hidden="true">·</div>
+            <strong>[待填]</strong>
+            <span class="muted">Software / Web</span>
+            <span class="muted">[待填]</span>
+          </div>
+          <div class="card team-card is-tbd">
+            <div class="avatar" aria-hidden="true">·</div>
+            <strong>[待填]</strong>
+            <span class="muted">Algorithm / Data</span>
+            <span class="muted">[待填]</span>
+          </div>
+          <div class="card team-card is-tbd">
+            <div class="avatar" aria-hidden="true">·</div>
+            <strong>[待填]</strong>
+            <span class="muted">Business / Ops</span>
+            <span class="muted">[待填]</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 10 footer -->
+  <footer id="footer">
+    <div class="container">
+      <p class="footer-tagline">支撑可感，反馈可用。<br><span class="en">Support you feel. Feedback you can act on.</span></p>
+      <!-- disclaimer:start --><!-- 17 号稿免责声明原文（照抄，勿改）+ KneeUp 短版 -->
+      <div class="disclaimer">
+        <p><strong>MENISCUS SHIELD is a sports support and training-feedback product. It is not a medical device and is not intended to diagnose, treat, rehabilitate, or prevent any injury or disease. If you experience pain or injury, consult a qualified medical professional.</strong></p>
+        <p><strong>MENISCUS SHIELD为运动支撑与训练反馈产品，非医疗器械，不用于诊断、治疗、康复或预防任何损伤与疾病。如有疼痛或损伤，请咨询专业医疗机构。</strong></p>
+        <p class="muted">KneeUp 为运动训练原型，不构成医疗建议、诊断或治疗；页面所有数据均为模拟演示。<br>KneeUp is a sports-training prototype. Not a medical device; no diagnosis or treatment. All data shown is simulated.</p>
+      </div>
+      <!-- disclaimer:end -->
+      <div class="footer-meta">
+        <span class="muted">联系：team@…（待填）· <a href="https://waffledesign.site" rel="noopener">waffledesign.site</a></span>
+        <span class="muted">© 2026 Team Free Will</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="./js/demo-bind.js" defer></script>
+</body>
+</html>
